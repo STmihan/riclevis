@@ -1,0 +1,102 @@
+{
+  "name": "Анастасия\nДягелева",
+  "subtitle": "Junior 2D Artist / Concept Artist",
+  "sidebar": {
+    "qrCodeUrl": "/qr.png",
+    "portfolioUrl": "https://www.artstation.com/riclevis",
+    "portfolioLabel": "Portfolio",
+    "contacts": [
+      {
+        "icon": "place.svg",
+        "label": "Москва / Удаленно"
+      },
+      {
+        "icon": "telegram.svg",
+        "label": "@RicLevis",
+        "url": "https://t.me/RicLevis"
+      },
+      {
+        "icon": "artstation.svg",
+        "label": "artstation.com/riclevis",
+        "url": "https://www.artstation.com/riclevis"
+      },
+      {
+        "icon": "email.svg",
+        "label": "diageleva.ap@gmail.com",
+        "url": "mailto:diageleva.ap@gmail.com"
+      }
+    ],
+    "skills": [
+      "Character Design",
+      "Concept Art",
+      "Pixel Art",
+      "Props Design",
+      "UI Design",
+      "Environment Art"
+    ],
+    "software": [
+      "Photoshop",
+      "Aseprite",
+      "Clip Studio Paint",
+      "Unity",
+      "Unreal Engine",
+      "Godot",
+      "RPG Maker"
+    ],
+    "languages": [
+      { "name": "Русский", "level": "Родной" },
+      { "name": "Английский", "level": "A2" }
+    ]
+  },
+  "sections": [
+    {
+      "id": "about",
+      "type": "text",
+      "title": "О себе",
+      "content": {
+        "text": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов."
+      }
+    },
+    {
+      "id": "experience",
+      "type": "career",
+      "title": "Опыт работы",
+      "content": {
+        "role": "Freelance Concept Artist",
+        "period": "2024 — Наст. время",
+        "items": [
+          {
+            "title": "Дизайн персонажей для инди-проектов",
+            "description": "Создание концептов персонажей по брифам заказчиков: reference sheets, проработка костюмов, аксессуаров и деталей. Выполнено 16+ проектов",
+            "links": [
+              { "url": "https://www.artstation.com/riclevis", "text": "Проект 1" },
+              { "url": "https://www.artstation.com/riclevis", "text": "Проект 2" },
+              { "url": "https://www.artstation.com/riclevis", "text": "Проект 3" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "gamejams",
+      "type": "projects",
+      "title": "Game Jams",
+      "content": {
+        "items": [
+          {
+            "name": "GMTK Game Jam 2025",
+            "duration": "4 дня",
+            "description": "Игра про работу в офисе (стилистика \"Papers, Please\"). Отрисовала 2 тайлсета (офис и дом), анимации, а также арт для мини-игры. Графика намеренно мрачная и повседневная.",
+            "link": { "url": "#", "text": "Ссылка на проект" }
+          },
+          {
+            "name": "Siberian Game Jam",
+            "duration": "3 дня",
+            "description": "Разработала визуал для мрачной деревни рядом с шахтой. Создала top-down тайлсет зданий, персонажей с анимациями и пользовательский интерфейс (UI).",
+            "link": { "url": "#", "text": "Ссылка на проект" }
+          }
+        ]
+      }
+    }
+  ]
+}

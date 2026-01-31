@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Base styles matching original resume */
+:root {
+  --primary-text: #222;
+  --secondary-text: #555;
+  --accent-color: #333;
+  --sidebar-bg: #f4f4f4;
+  --bg-color: #fff;
+  --line-height: 1.5;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #e0e0e0;
+  color: var(--primary-text);
+  line-height: var(--line-height);
+  padding: 40px 0;
+}
+
+/* Print styles */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .resume-container {
+    width: 210mm !important;
+    height: 297mm !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #000 !important;
+  }
+}

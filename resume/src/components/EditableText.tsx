@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
-import { useResumeContext } from '../context/ResumeContext'
+import { useTranslation } from 'react-i18next'
+import { useResumeStore } from '../store/resumeStore'
 
 interface Props {
   value: string
@@ -14,12 +15,15 @@ export function EditableText({
   onChange,
   className = '',
   multiline = false,
-  placeholder = 'Click to edit...',
+  placeholder,
 }: Props) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(value)
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+
+  const defaultPlaceholder = placeholder || t('tooltips.clickToEdit')
 
   useEffect(() => {
     setEditValue(value)
@@ -90,9 +94,9 @@ export function EditableText({
     <span
       onClick={() => setIsEditing(true)}
       className={`${className} cursor-pointer hover:bg-yellow-100 hover:outline hover:outline-2 hover:outline-yellow-300 rounded transition-colors`}
-      title="Click to edit"
+      title={t('tooltips.clickToEdit')}
     >
-      {value || <span className="text-gray-400 italic">{placeholder}</span>}
+      {value || <span className="text-gray-400 italic">{defaultPlaceholder}</span>}
     </span>
   )
 }

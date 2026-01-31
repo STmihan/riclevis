@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Link, Plus, X, GripVertical, Settings } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   DndContext,
   closestCenter,
@@ -11,16 +12,18 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Sidebar as SidebarType, Contact, Language } from '../types/resume'
+import type { Sidebar as SidebarType, Contact, Language, LocalizedString } from '../types/resume'
 import { EditableText } from './EditableText'
-import { useResumeContext } from '../context/ResumeContext'
+import { useResumeStore } from '../store/resumeStore'
+import { useUIStore } from '../store/uiStore'
 import { usePopup } from '../context/PopupContext'
+import { useLocalized, getLocalizedField, setLocalizedField } from '../utils/localized'
 
 const AVAILABLE_ICONS = ['email.svg', 'telegram.svg', 'artstation.svg', 'place.svg']
 
-// Section header with optional add button
 function SectionHeader({ title, onAdd }: { title: string; onAdd?: () => void }) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
 
   return (
     <div
@@ -40,7 +43,7 @@ function SectionHeader({ title, onAdd }: { title: string; onAdd?: () => void }) 
         <button
           onClick={onAdd}
           className="text-gray-400 hover:text-green-500 transition-colors"
-          title="Добавить"
+          title={t('common.add')}
         >
           <Plus size={14} />
         </button>
@@ -49,7 +52,6 @@ function SectionHeader({ title, onAdd }: { title: string; onAdd?: () => void }) 
   )
 }
 
-// Sortable contact item
 function SortableContact({
   contact,
   index,
@@ -67,14 +69,16 @@ function SortableContact({
   iconPickerOpen: number | null
   setIconPickerOpen: (index: number | null) => void
 }) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const iconPickerRef = useRef<HTMLDivElement>(null)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `contact-${index}`,
     disabled: !isEditMode,
   })
 
-  // Close icon picker on outside mousedown
   useEffect(() => {
     if (iconPickerOpen !== index) return
 
@@ -94,13 +98,16 @@ function SortableContact({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  const handleLabelChange = (value: string) => {
+    onUpdate({ label: setLocalizedField(contact.label, displayLang, value) })
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={{ ...style, marginBottom: '12px', fontSize: '14px' }}
       className="group/contact relative flex items-center gap-2.5"
     >
-      {/* Drag handle - absolute positioned */}
       {isEditMode && (
         <button
           {...attributes}
@@ -111,13 +118,12 @@ function SortableContact({
         </button>
       )}
 
-      {/* Icon with picker */}
       <div className="relative shrink-0 flex items-center justify-center">
         {isEditMode ? (
           <button
             onClick={() => setIconPickerOpen(iconPickerOpen === index ? null : index)}
             className="hover:opacity-100 transition-opacity"
-            title="Изменить иконку"
+            title={t('tooltips.clickToEdit')}
           >
             <img
               src={`/icons/${contact.icon}`}
@@ -136,7 +142,6 @@ function SortableContact({
             style={{ opacity: 0.7 }}
           />
         )}
-        {/* Icon picker dropdown */}
         {isEditMode && iconPickerOpen === index && (
           <div
             ref={iconPickerRef}
@@ -165,29 +170,30 @@ function SortableContact({
         )}
       </div>
 
-      {/* Contact label */}
       <div className="flex-1 min-w-0 truncate">
         {isEditMode ? (
           <span className="block truncate">
-            <EditableText value={contact.label} onChange={(label) => onUpdate({ label })} />
+            <EditableText
+              value={getLocalizedField(contact.label, displayLang)}
+              onChange={handleLabelChange}
+            />
           </span>
         ) : contact.url ? (
           <a
             href={contact.url}
             className="block truncate"
             style={{ color: '#222', textDecoration: 'none' }}
-            title={contact.label}
+            title={loc(contact.label)}
           >
-            {contact.label}
+            {loc(contact.label)}
           </a>
         ) : (
-          <span className="block truncate" title={contact.label}>
-            {contact.label}
+          <span className="block truncate" title={loc(contact.label)}>
+            {loc(contact.label)}
           </span>
         )}
       </div>
 
-      {/* Action buttons - absolute positioned outside */}
       {isEditMode && (
         <div className="absolute left-full ml-2 flex items-center gap-0.5 opacity-0 group-hover/contact:opacity-100 transition-opacity bg-white rounded shadow-sm border border-gray-200 px-1 py-0.5">
           <button
@@ -197,14 +203,14 @@ function SortableContact({
                 ? 'text-blue-500 hover:bg-blue-50'
                 : 'text-gray-400 hover:text-blue-500 hover:bg-gray-50'
             }`}
-            title={contact.url ? 'Редактировать ссылку' : 'Добавить ссылку'}
+            title={contact.url ? t('popup.editLink') : t('popup.addLink')}
           >
             <Link size={12} />
           </button>
           <button
             onClick={onDelete}
             className="p-0.5 rounded text-gray-400 hover:text-red-500 hover:bg-red-50"
-            title="Удалить"
+            title={t('common.delete')}
           >
             <X size={12} />
           </button>
@@ -214,7 +220,6 @@ function SortableContact({
   )
 }
 
-// Sortable simple item (for skills, software)
 function SortableItem({
   item,
   index,
@@ -222,13 +227,16 @@ function SortableItem({
   onChange,
   onDelete,
 }: {
-  item: string
+  item: LocalizedString
   index: number
   prefix: string
   onChange: (value: string) => void
   onDelete: () => void
 }) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `${prefix}-${index}`,
     disabled: !isEditMode,
@@ -246,7 +254,6 @@ function SortableItem({
       style={{ ...style, marginBottom: '6px', fontSize: '14px' }}
       className="group/item relative truncate"
     >
-      {/* Drag handle - absolute */}
       {isEditMode && (
         <button
           {...attributes}
@@ -257,13 +264,16 @@ function SortableItem({
         </button>
       )}
       <span className="truncate">
-        <EditableText value={item} onChange={onChange} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(item, displayLang) : loc(item)}
+          onChange={onChange}
+        />
       </span>
-      {/* Delete button - absolute */}
       {isEditMode && (
         <button
           onClick={onDelete}
           className="absolute -right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+          title={t('common.delete')}
         >
           <X size={10} />
         </button>
@@ -272,7 +282,6 @@ function SortableItem({
   )
 }
 
-// Sortable language item
 function SortableLanguage({
   lang,
   index,
@@ -286,7 +295,10 @@ function SortableLanguage({
   onChangeLevel: (level: string) => void
   onDelete: () => void
 }) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `lang-${index}`,
     disabled: !isEditMode,
@@ -304,7 +316,6 @@ function SortableLanguage({
       style={{ ...style, marginBottom: '6px', fontSize: '14px' }}
       className="group/item relative truncate"
     >
-      {/* Drag handle - absolute */}
       {isEditMode && (
         <button
           {...attributes}
@@ -316,15 +327,22 @@ function SortableLanguage({
       )}
       <span className="truncate">
         <strong>
-          <EditableText value={lang.name} onChange={onChangeName} />:
+          <EditableText
+            value={isEditMode ? getLocalizedField(lang.name, displayLang) : loc(lang.name)}
+            onChange={onChangeName}
+          />
+          :
         </strong>{' '}
-        <EditableText value={lang.level} onChange={onChangeLevel} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(lang.level, displayLang) : loc(lang.level)}
+          onChange={onChangeLevel}
+        />
       </span>
-      {/* Delete button - absolute */}
       {isEditMode && (
         <button
           onClick={onDelete}
           className="absolute -right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+          title={t('common.delete')}
         >
           <X size={10} />
         </button>
@@ -338,6 +356,7 @@ interface Props {
 }
 
 export function Sidebar({ data }: Props) {
+  const { t } = useTranslation()
   const {
     updatePortfolio,
     updateSkills,
@@ -345,7 +364,9 @@ export function Sidebar({ data }: Props) {
     updateLanguages,
     updateContacts,
     isEditMode,
-  } = useResumeContext()
+  } = useResumeStore()
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const { openLinkPopup } = usePopup()
   const [iconPickerOpen, setIconPickerOpen] = useState<number | null>(null)
 
@@ -355,9 +376,15 @@ export function Sidebar({ data }: Props) {
     })
   )
 
-  // Contact handlers
   const handleAddContact = () => {
-    updateContacts([...data.contacts, { icon: 'email.svg', label: 'Новый контакт', url: '' }])
+    updateContacts([
+      ...data.contacts,
+      {
+        icon: 'email.svg',
+        label: { ru: t('defaults.newContact'), en: t('defaults.newContact') },
+        url: '',
+      },
+    ])
   }
 
   const handleContactUpdate = (index: number, updates: Partial<Contact>) => {
@@ -387,10 +414,10 @@ export function Sidebar({ data }: Props) {
     }
   }
 
-  // Skills handlers
   const handleSkillChange = (index: number, value: string) => {
-    const newSkills = [...data.skills]
-    newSkills[index] = value
+    const newSkills = data.skills.map((skill, i) =>
+      i === index ? setLocalizedField(skill, displayLang, value) : skill
+    )
     updateSkills(newSkills)
   }
 
@@ -406,10 +433,10 @@ export function Sidebar({ data }: Props) {
     }
   }
 
-  // Software handlers
   const handleSoftwareChange = (index: number, value: string) => {
-    const newSoftware = [...data.software]
-    newSoftware[index] = value
+    const newSoftware = data.software.map((sw, i) =>
+      i === index ? setLocalizedField(sw, displayLang, value) : sw
+    )
     updateSoftware(newSoftware)
   }
 
@@ -425,10 +452,10 @@ export function Sidebar({ data }: Props) {
     }
   }
 
-  // Language handlers
   const handleLanguageChange = (index: number, field: 'name' | 'level', value: string) => {
-    const newLangs = [...data.languages]
-    newLangs[index] = { ...newLangs[index], [field]: value }
+    const newLangs = data.languages.map((lang, i) =>
+      i === index ? { ...lang, [field]: setLocalizedField(lang[field], displayLang, value) } : lang
+    )
     updateLanguages(newLangs)
   }
 
@@ -463,7 +490,6 @@ export function Sidebar({ data }: Props) {
       className="bg-[#f4f4f4] border-r border-[#ddd] overflow-visible"
       style={{ padding: '30px 20px' }}
     >
-      {/* QR Section */}
       <div style={{ marginBottom: '30px', textAlign: 'center' }}>
         <QRCodeSVG
           value={data.portfolioUrl}
@@ -493,7 +519,7 @@ export function Sidebar({ data }: Props) {
               <button
                 onClick={handleEditPortfolioLink}
                 className="absolute left-full ml-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 opacity-0 group-hover/portfolio:opacity-100 transition-opacity"
-                title="Изменить ссылку"
+                title={t('popup.editLink')}
               >
                 <Settings size={12} />
               </button>
@@ -520,9 +546,8 @@ export function Sidebar({ data }: Props) {
         </div>
       </div>
 
-      {/* Contacts */}
       <div style={{ marginBottom: '30px' }}>
-        <SectionHeader title="Контакты" onAdd={handleAddContact} />
+        <SectionHeader title={loc(data.labels.contacts)} onAdd={handleAddContact} />
         {isEditMode ? (
           <DndContext
             sensors={sensors}
@@ -567,13 +592,13 @@ export function Sidebar({ data }: Props) {
                   href={contact.url}
                   className="truncate flex-1 min-w-0"
                   style={{ color: '#222', textDecoration: 'none' }}
-                  title={contact.label}
+                  title={loc(contact.label)}
                 >
-                  {contact.label}
+                  {loc(contact.label)}
                 </a>
               ) : (
-                <span className="truncate flex-1 min-w-0" title={contact.label}>
-                  {contact.label}
+                <span className="truncate flex-1 min-w-0" title={loc(contact.label)}>
+                  {loc(contact.label)}
                 </span>
               )}
             </div>
@@ -581,9 +606,16 @@ export function Sidebar({ data }: Props) {
         )}
       </div>
 
-      {/* Skills */}
       <div style={{ marginBottom: '30px' }}>
-        <SectionHeader title="Навыки" onAdd={() => updateSkills([...data.skills, 'Новый навык'])} />
+        <SectionHeader
+          title={loc(data.labels.skills)}
+          onAdd={() =>
+            updateSkills([
+              ...data.skills,
+              { ru: t('defaults.newSkill'), en: t('defaults.newSkill') },
+            ])
+          }
+        />
         {isEditMode ? (
           <DndContext
             sensors={sensors}
@@ -612,20 +644,24 @@ export function Sidebar({ data }: Props) {
                 key={i}
                 className="truncate"
                 style={{ marginBottom: '6px', fontSize: '14px' }}
-                title={skill}
+                title={loc(skill)}
               >
-                {skill}
+                {loc(skill)}
               </li>
             ))}
           </ul>
         )}
       </div>
 
-      {/* Software */}
       <div style={{ marginBottom: '30px' }}>
         <SectionHeader
-          title="Софт"
-          onAdd={() => updateSoftware([...data.software, 'Новая программа'])}
+          title={loc(data.labels.software)}
+          onAdd={() =>
+            updateSoftware([
+              ...data.software,
+              { ru: t('defaults.newSkill'), en: t('defaults.newSkill') },
+            ])
+          }
         />
         {isEditMode ? (
           <DndContext
@@ -655,20 +691,27 @@ export function Sidebar({ data }: Props) {
                 key={i}
                 className="truncate"
                 style={{ marginBottom: '6px', fontSize: '14px' }}
-                title={soft}
+                title={loc(soft)}
               >
-                {soft}
+                {loc(soft)}
               </li>
             ))}
           </ul>
         )}
       </div>
 
-      {/* Languages */}
       <div style={{ marginBottom: '30px' }}>
         <SectionHeader
-          title="Языки"
-          onAdd={() => updateLanguages([...data.languages, { name: 'Язык', level: 'Уровень' }])}
+          title={loc(data.labels.languages)}
+          onAdd={() =>
+            updateLanguages([
+              ...data.languages,
+              {
+                name: { ru: t('defaults.language'), en: t('defaults.language') },
+                level: { ru: t('defaults.level'), en: t('defaults.level') },
+              },
+            ])
+          }
         />
         {isEditMode ? (
           <DndContext
@@ -698,9 +741,9 @@ export function Sidebar({ data }: Props) {
                 key={i}
                 className="truncate"
                 style={{ marginBottom: '6px', fontSize: '14px' }}
-                title={`${lang.name}: ${lang.level}`}
+                title={`${loc(lang.name)}: ${loc(lang.level)}`}
               >
-                <strong>{lang.name}:</strong> {lang.level}
+                <strong>{loc(lang.name)}:</strong> {loc(lang.level)}
               </li>
             ))}
           </ul>

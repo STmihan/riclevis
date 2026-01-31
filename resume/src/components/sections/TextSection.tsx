@@ -1,23 +1,29 @@
-import type { TextContent } from '../../types/resume'
+import type { TextContent, LocalizedString } from '../../types/resume'
 import { EditableText } from '../EditableText'
 import { RichText } from '../RichText'
-import { useResumeContext } from '../../context/ResumeContext'
+import { useResumeStore } from '../../store/resumeStore'
+import { useUIStore } from '../../store/uiStore'
+import { useLocalized, getLocalizedField, setLocalizedField } from '../../utils/localized'
 
 interface Props {
   id: string
-  title: string
+  title: LocalizedString
   content: TextContent
 }
 
 export function TextSection({ id, title, content }: Props) {
-  const { updateSection } = useResumeContext()
+  const { updateSection, isEditMode } = useResumeStore()
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
 
   const handleTitleChange = (newTitle: string) => {
-    updateSection(id, { title: newTitle })
+    updateSection(id, { title: setLocalizedField(title, displayLang, newTitle) })
   }
 
   const handleTextChange = (newText: string) => {
-    updateSection(id, { content: { text: newText } })
+    updateSection(id, {
+      content: { text: setLocalizedField(content.text, displayLang, newText) },
+    })
   }
 
   return (
@@ -34,10 +40,16 @@ export function TextSection({ id, title, content }: Props) {
           fontWeight: 'bold',
         }}
       >
-        <EditableText value={title} onChange={handleTitleChange} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(title, displayLang) : loc(title)}
+          onChange={handleTitleChange}
+        />
       </h2>
       <p style={{ fontSize: '14px', marginBottom: '30px', color: '#333' }}>
-        <RichText value={content.text} onChange={handleTextChange} />
+        <RichText
+          value={isEditMode ? getLocalizedField(content.text, displayLang) : loc(content.text)}
+          onChange={handleTextChange}
+        />
       </p>
     </section>
   )

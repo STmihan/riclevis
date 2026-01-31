@@ -6,7 +6,8 @@ import {
   type KeyboardEvent,
   type ClipboardEvent,
 } from 'react'
-import { useResumeContext } from '../context/ResumeContext'
+import { useTranslation } from 'react-i18next'
+import { useResumeStore } from '../store/resumeStore'
 import { usePopup } from '../context/PopupContext'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { FormatToolbar } from './FormatToolbar'
@@ -18,13 +19,9 @@ interface Props {
   placeholder?: string
 }
 
-export function RichText({
-  value,
-  onChange,
-  className = '',
-  placeholder = 'Нажмите для редактирования...',
-}: Props) {
-  const { isEditMode } = useResumeContext()
+export function RichText({ value, onChange, className = '', placeholder }: Props) {
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
   const { openLinkPopup } = usePopup()
   const [isEditing, setIsEditing] = useState(false)
   const editorRef = useRef<HTMLDivElement>(null)
@@ -32,7 +29,8 @@ export function RichText({
   const savedSelectionRef = useRef<Range | null>(null)
   const isOpeningPopupRef = useRef(false)
 
-  // Update editor content when value changes externally
+  const defaultPlaceholder = placeholder || t('tooltips.clickToEdit')
+
   useEffect(() => {
     if (editorRef.current && !isEditing) {
       editorRef.current.innerHTML = sanitizeHtml(value)
@@ -40,7 +38,6 @@ export function RichText({
   }, [value, isEditing])
 
   const handleSave = useCallback(() => {
-    // Don't close editor if we're opening a popup
     if (isOpeningPopupRef.current) return
 
     if (editorRef.current) {
@@ -51,7 +48,6 @@ export function RichText({
   }, [onChange])
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    // Format shortcuts
     if (e.ctrlKey || e.metaKey) {
       switch (e.key.toLowerCase()) {
         case 'b':
@@ -73,7 +69,6 @@ export function RichText({
       }
     }
 
-    // Escape to cancel
     if (e.key === 'Escape') {
       if (editorRef.current) {
         editorRef.current.innerHTML = sanitizeHtml(value)
@@ -131,7 +126,7 @@ export function RichText({
     openLinkPopup({
       initialUrl: currentUrl,
       initialText: selection.toString(),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       onSubmit: (url, _text) => {
         restoreSelection()
         if (url) {
@@ -155,11 +150,9 @@ export function RichText({
     })
   }
 
-  // Handle paste - auto-create links for URLs
   const handlePaste = (e: ClipboardEvent) => {
     const text = e.clipboardData.getData('text/plain')
 
-    // Check if pasted text is a URL
     const urlPattern = /^https?:\/\/\S+$/i
     if (urlPattern.test(text.trim())) {
       e.preventDefault()
@@ -167,37 +160,32 @@ export function RichText({
 
       const selection = window.getSelection()
       if (selection && !selection.isCollapsed) {
-        // If there's a selection, make it a link
         document.execCommand('createLink', false, url)
       } else {
-        // Otherwise, insert a link with the URL as text
         document.execCommand('insertHTML', false, `<a href="${url}">${url}</a>`)
       }
     }
   }
 
-  // View mode (not in edit mode) - render sanitized HTML
   if (!isEditMode) {
     return <span className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(value) }} />
   }
 
-  // Edit mode but not currently editing - show clickable view
   if (!isEditing) {
     return (
       <span
         onClick={() => setIsEditing(true)}
         className={`${className} cursor-pointer hover:bg-yellow-100 hover:outline hover:outline-2 hover:outline-yellow-300 rounded transition-colors`}
-        title="Нажмите для редактирования"
+        title={t('tooltips.clickToEdit')}
         dangerouslySetInnerHTML={{
           __html: value
             ? sanitizeHtml(value)
-            : `<span class="text-gray-400 italic">${placeholder}</span>`,
+            : `<span class="text-gray-400 italic">${defaultPlaceholder}</span>`,
         }}
       />
     )
   }
 
-  // Currently editing
   return (
     <div ref={containerRef} className="relative">
       <FormatToolbar containerRef={containerRef} onFormat={handleFormat} />

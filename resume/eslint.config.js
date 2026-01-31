@@ -5,6 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import eslintPluginPrettier from 'eslint-plugin-prettier'
 import eslintConfigPrettier from 'eslint-config-prettier'
+import unusedImports from 'eslint-plugin-unused-imports'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
@@ -19,11 +20,15 @@ export default defineConfig([
     ],
     plugins: {
       prettier: eslintPluginPrettier,
+      'unused-imports': unusedImports,
     },
     rules: {
       ...eslintConfigPrettier.rules,
       'prettier/prettier': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
     languageOptions: {
       ecmaVersion: 2020,

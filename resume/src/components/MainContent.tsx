@@ -12,24 +12,36 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import type { Section, TextContent, CareerContent, ProjectsContent } from '../types/resume'
+import { useTranslation } from 'react-i18next'
+import type {
+  Section,
+  TextContent,
+  CareerContent,
+  ProjectsContent,
+  LocalizedString,
+} from '../types/resume'
 import { isTextContent, isCareerContent, isProjectsContent } from '../types/resume'
 import { TextSection, CareerSection, ProjectsSection } from './sections'
 import { EditableText } from './EditableText'
 import { SectionWrapper } from './SectionWrapper'
 import { AddSectionButton } from './AddSectionButton'
-import { useResumeContext } from '../context/ResumeContext'
+import { useResumeStore } from '../store/resumeStore'
+import { useLocalized, getLocalizedField, setLocalizedField } from '../utils/localized'
+import { useUIStore } from '../store/uiStore'
 
 interface Props {
-  name: string
-  subtitle: string
+  name: LocalizedString
+  subtitle: LocalizedString
   sections: Section[]
   contentRef?: React.RefObject<HTMLDivElement | null>
 }
 
 export function MainContent({ name, subtitle, sections, contentRef }: Props) {
+  const { t } = useTranslation()
   const { updateName, updateSubtitle, updateSection, reorderSections, isEditMode } =
-    useResumeContext()
+    useResumeStore()
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -55,11 +67,18 @@ export function MainContent({ name, subtitle, sections, contentRef }: Props) {
   const handleAddItem = (section: Section) => {
     if (isCareerContent(section.content)) {
       const content = section.content as CareerContent
-      const newItem = { title: 'Новый проект', description: 'Описание проекта' }
+      const newItem = {
+        title: { ru: t('defaults.newProject'), en: t('defaults.newProject') },
+        description: { ru: t('defaults.description'), en: t('defaults.description') },
+      }
       updateSection(section.id, { content: { ...content, items: [...content.items, newItem] } })
     } else if (isProjectsContent(section.content)) {
       const content = section.content as ProjectsContent
-      const newItem = { name: 'Новый проект', duration: '3 дня', description: 'Описание проекта' }
+      const newItem = {
+        name: { ru: t('defaults.newProject'), en: t('defaults.newProject') },
+        duration: { ru: t('defaults.period'), en: t('defaults.period') },
+        description: { ru: t('defaults.description'), en: t('defaults.description') },
+      }
       updateSection(section.id, { content: { items: [...content.items, newItem] } })
     }
   }
@@ -109,7 +128,6 @@ export function MainContent({ name, subtitle, sections, contentRef }: Props) {
 
   return (
     <main style={{ padding: '40px' }} className="flex-1">
-      {/* Content wrapper for measuring height (excludes AddSectionButton) */}
       <div ref={contentRef}>
         <header style={{ marginBottom: '30px' }}>
           <h1
@@ -123,14 +141,17 @@ export function MainContent({ name, subtitle, sections, contentRef }: Props) {
             }}
           >
             <EditableText
-              value={name}
-              onChange={updateName}
+              value={isEditMode ? getLocalizedField(name, displayLang) : loc(name)}
+              onChange={(value) => updateName(setLocalizedField(name, displayLang, value))}
               multiline
               className="whitespace-pre-line"
             />
           </h1>
           <div style={{ fontSize: '18px', color: '#555', fontWeight: 300 }}>
-            <EditableText value={subtitle} onChange={updateSubtitle} />
+            <EditableText
+              value={isEditMode ? getLocalizedField(subtitle, displayLang) : loc(subtitle)}
+              onChange={(value) => updateSubtitle(setLocalizedField(subtitle, displayLang, value))}
+            />
           </div>
         </header>
 

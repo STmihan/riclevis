@@ -1,35 +1,32 @@
-// Section types for main content
+export type LocalizedString = { [lang: string]: string }
+
 export type SectionType = 'text' | 'career' | 'projects'
 
-// Text section (like "About")
 export interface TextContent {
-  text: string
+  text: LocalizedString
 }
 
-// Link with text
 export interface LinkItem {
   url: string
   text: string
 }
 
-// Career section (like "Work Experience")
 export interface CareerItem {
-  title: string
-  description: string
+  title: LocalizedString
+  description: LocalizedString
   links?: LinkItem[]
 }
 
 export interface CareerContent {
-  role: string
-  period: string
+  role: LocalizedString
+  period: LocalizedString
   items: CareerItem[]
 }
 
-// Projects section (like "Game Jams")
 export interface ProjectItem {
-  name: string
-  duration: string
-  description: string
+  name: LocalizedString
+  duration: LocalizedString
+  description: LocalizedString
   link?: LinkItem
 }
 
@@ -37,47 +34,49 @@ export interface ProjectsContent {
   items: ProjectItem[]
 }
 
-// Generic section
 export interface Section {
   id: string
   type: SectionType
-  title: string
+  title: LocalizedString
   content: TextContent | CareerContent | ProjectsContent
 }
 
-// Contact item
 export interface Contact {
-  icon: string // filename in public/icons/
-  label: string
+  icon: string
+  label: LocalizedString
   url?: string
 }
 
-// Language item
 export interface Language {
-  name: string
-  level: string
+  name: LocalizedString
+  level: LocalizedString
 }
 
-// Sidebar structure (fixed sections)
+export interface SidebarLabels {
+  contacts: LocalizedString
+  skills: LocalizedString
+  software: LocalizedString
+  languages: LocalizedString
+}
+
 export interface Sidebar {
+  labels: SidebarLabels
   qrCodeUrl: string
   portfolioUrl: string
   portfolioLabel: string
   contacts: Contact[]
-  skills: string[]
-  software: string[]
+  skills: LocalizedString[]
+  software: LocalizedString[]
   languages: Language[]
 }
 
-// Full resume structure
 export interface Resume {
-  name: string
-  subtitle: string
+  name: LocalizedString
+  subtitle: LocalizedString
   sidebar: Sidebar
   sections: Section[]
 }
 
-// Type guards
 export function isTextContent(
   content: TextContent | CareerContent | ProjectsContent
 ): content is TextContent {

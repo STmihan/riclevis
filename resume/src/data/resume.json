@@ -1,77 +1,200 @@
 {
-  "name": "Анастасия\nДягелева",
-  "subtitle": "Junior 2D Artist / Concept Artist",
+  "name": {
+    "ru": "Анастасия\nДягелева",
+    "en": "Anastasia\nDyageleva"
+  },
+  "subtitle": {
+    "ru": "Junior 2D Artist / Concept Artist",
+    "en": "Junior 2D Artist / Concept Artist"
+  },
   "sidebar": {
+    "labels": {
+      "contacts": {
+        "ru": "Контакты",
+        "en": "Contacts"
+      },
+      "skills": {
+        "ru": "Навыки",
+        "en": "Skills"
+      },
+      "software": {
+        "ru": "Софт",
+        "en": "Software"
+      },
+      "languages": {
+        "ru": "Языки",
+        "en": "Languages"
+      }
+    },
     "qrCodeUrl": "/qr.png",
     "portfolioUrl": "https://www.artstation.com/riclevis",
     "portfolioLabel": "Portfolio",
     "contacts": [
       {
         "icon": "place.svg",
-        "label": "Москва / Удаленно"
+        "label": {
+          "ru": "Москва / Удаленно",
+          "en": "Moscow / Remote"
+        }
       },
       {
         "icon": "telegram.svg",
-        "label": "@RicLevis",
+        "label": {
+          "ru": "@RicLevis",
+          "en": "@RicLevis"
+        },
         "url": "https://t.me/RicLevis"
       },
       {
         "icon": "artstation.svg",
-        "label": "artstation.com/riclevis",
+        "label": {
+          "ru": "artstation.com/riclevis",
+          "en": "artstation.com/riclevis"
+        },
         "url": "https://www.artstation.com/riclevis"
       },
       {
         "icon": "email.svg",
-        "label": "diageleva.ap@gmail.com",
+        "label": {
+          "ru": "diageleva.ap@gmail.com",
+          "en": "diageleva.ap@gmail.com"
+        },
         "url": "mailto:diageleva.ap@gmail.com"
       }
     ],
     "skills": [
-      "Character Design",
-      "Concept Art",
-      "Pixel Art",
-      "Props Design",
-      "UI Design",
-      "Environment Art"
+      {
+        "ru": "Character Design",
+        "en": "Character Design"
+      },
+      {
+        "ru": "Concept Art",
+        "en": "Concept Art"
+      },
+      {
+        "ru": "Pixel Art",
+        "en": "Pixel Art"
+      },
+      {
+        "ru": "Props Design",
+        "en": "Props Design"
+      },
+      {
+        "ru": "UI Design",
+        "en": "UI Design"
+      },
+      {
+        "ru": "Environment Art",
+        "en": "Environment Art"
+      }
     ],
     "software": [
-      "Photoshop",
-      "Aseprite",
-      "Clip Studio Paint",
-      "Unity",
-      "Unreal Engine",
-      "Godot",
-      "RPG Maker"
+      {
+        "ru": "Photoshop",
+        "en": "Photoshop"
+      },
+      {
+        "ru": "Aseprite",
+        "en": "Aseprite"
+      },
+      {
+        "ru": "Clip Studio Paint",
+        "en": "Clip Studio Paint"
+      },
+      {
+        "ru": "Unity",
+        "en": "Unity"
+      },
+      {
+        "ru": "Unreal Engine",
+        "en": "Unreal Engine"
+      },
+      {
+        "ru": "Godot",
+        "en": "Godot"
+      },
+      {
+        "ru": "RPG Maker",
+        "en": "RPG Maker"
+      }
     ],
     "languages": [
-      { "name": "Русский", "level": "Родной" },
-      { "name": "Английский", "level": "A2" }
+      {
+        "name": {
+          "ru": "Русский",
+          "en": "Russian"
+        },
+        "level": {
+          "ru": "Родной",
+          "en": "Native"
+        }
+      },
+      {
+        "name": {
+          "ru": "Английский",
+          "en": "English"
+        },
+        "level": {
+          "ru": "A2",
+          "en": "A2"
+        }
+      }
     ]
   },
   "sections": [
     {
       "id": "about",
       "type": "text",
-      "title": "О себе",
+      "title": {
+        "ru": "О себе",
+        "en": "About"
+      },
       "content": {
-        "text": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов."
+        "text": {
+          "ru": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов.",
+          "en": "Concept artist and 2D artist specializing in character design. Since 2024, completed 16+ commercial projects for indie developers and private clients. Experienced with game engines (Unity, Unreal, Godot) and adapting graphics to technical requirements. Aspiring game jam participant."
+        }
       }
     },
     {
       "id": "experience",
       "type": "career",
-      "title": "Опыт работы",
+      "title": {
+        "ru": "Опыт работы",
+        "en": "Experience"
+      },
       "content": {
-        "role": "Freelance Concept Artist",
-        "period": "2024 — Наст. время",
+        "role": {
+          "ru": "Freelance Concept Artist",
+          "en": "Freelance Concept Artist"
+        },
+        "period": {
+          "ru": "2024 — Наст. время",
+          "en": "2024 — Present"
+        },
         "items": [
           {
-            "title": "Дизайн персонажей для инди-проектов",
-            "description": "Создание концептов персонажей по брифам заказчиков: reference sheets, проработка костюмов, аксессуаров и деталей. Выполнено 16+ проектов",
+            "title": {
+              "ru": "Дизайн персонажей для инди-проектов",
+              "en": "Character Design for Indie Projects"
+            },
+            "description": {
+              "ru": "Создание концептов персонажей по брифам заказчиков: reference sheets, проработка костюмов, аксессуаров и деталей. Выполнено <strong>16+ проектов</strong>",
+              "en": "Creating character concepts based on client briefs: reference sheets, costume design, accessories and details. Completed 16+ projects"
+            },
             "links": [
-              { "url": "https://www.artstation.com/riclevis", "text": "Проект 1" },
-              { "url": "https://www.artstation.com/riclevis", "text": "Проект 2" },
-              { "url": "https://www.artstation.com/riclevis", "text": "Проект 3" }
+              {
+                "url": "https://www.artstation.com/riclevis",
+                "text": "Project 1"
+              },
+              {
+                "url": "https://www.artstation.com/riclevis",
+                "text": "Project 2"
+              },
+              {
+                "url": "https://www.artstation.com/riclevis",
+                "text": "Project 3"
+              }
             ]
           }
         ]
@@ -80,20 +203,47 @@
     {
       "id": "gamejams",
       "type": "projects",
-      "title": "Game Jams",
+      "title": {
+        "ru": "Game Jams",
+        "en": "Game Jams"
+      },
       "content": {
         "items": [
           {
-            "name": "GMTK Game Jam 2025",
-            "duration": "4 дня",
-            "description": "Игра про работу в офисе (стилистика \"Papers, Please\"). Отрисовала 2 тайлсета (офис и дом), анимации, а также арт для мини-игры. Графика намеренно мрачная и повседневная.",
-            "link": { "url": "#", "text": "Ссылка на проект" }
+            "name": {
+              "ru": "GMTK Game Jam 2025",
+              "en": "GMTK Game Jam 2025"
+            },
+            "duration": {
+              "ru": "4 дня",
+              "en": "4 days"
+            },
+            "description": {
+              "ru": "Игра про работу в офисе (стилистика \"Papers, Please\"). Отрисовала 2 тайлсета (офис и дом), анимации, а также арт для мини-игры. Графика намеренно мрачная и повседневная.",
+              "en": "Office work game (\"Papers, Please\" style). Created 2 tilesets (office and home), animations, and mini-game art. Graphics intentionally dark and mundane."
+            },
+            "link": {
+              "url": "#",
+              "text": "View Project"
+            }
           },
           {
-            "name": "Siberian Game Jam",
-            "duration": "3 дня",
-            "description": "Разработала визуал для мрачной деревни рядом с шахтой. Создала top-down тайлсет зданий, персонажей с анимациями и пользовательский интерфейс (UI).",
-            "link": { "url": "#", "text": "Ссылка на проект" }
+            "name": {
+              "ru": "Siberian Game Jam",
+              "en": "Siberian Game Jam"
+            },
+            "duration": {
+              "ru": "3 дня",
+              "en": "3 days"
+            },
+            "description": {
+              "ru": "Разработала визуал для мрачной деревни рядом с шахтой. Создала top-down тайлсет зданий, персонажей с анимациями и пользовательский интерфейс (UI).",
+              "en": "Developed visuals for a gloomy mining village. Created top-down building tileset, character animations, and user interface (UI)."
+            },
+            "link": {
+              "url": "#",
+              "text": "View Project"
+            }
           }
         ]
       }

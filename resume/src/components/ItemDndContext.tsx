@@ -1,5 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, type ReactNode } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -11,7 +10,8 @@ import {
   DragOverlay,
 } from '@dnd-kit/core'
 import { useState } from 'react'
-import { useResumeContext } from '../context/ResumeContext'
+import { useTranslation } from 'react-i18next'
+import { useResumeStore } from '../store/resumeStore'
 
 interface ItemDndContextType {
   activeId: string | null
@@ -20,15 +20,10 @@ interface ItemDndContextType {
 
 const ItemDndCtx = createContext<ItemDndContextType>({ activeId: null, activeType: null })
 
-export function useItemDnd() {
-  return useContext(ItemDndCtx)
-}
-
 interface Props {
   children: ReactNode
 }
 
-// Parse item id: "project:sectionId:itemIndex" or "career:sectionId:itemIndex"
 function parseItemId(
   id: string
 ): { type: 'project' | 'career'; sectionId: string; index: number } | null {
@@ -44,7 +39,8 @@ function parseItemId(
 }
 
 export function ItemDndProvider({ children }: Props) {
-  const { moveItem, isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const { moveItem, isEditMode } = useResumeStore()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [activeType, setActiveType] = useState<'project' | 'career' | null>(null)
 
@@ -76,7 +72,6 @@ export function ItemDndProvider({ children }: Props) {
     const overData = parseItemId(over.id as string)
 
     if (!activeData || !overData) return
-    // Only allow moving within same type (project to project, career to career)
     if (activeData.type !== overData.type) return
 
     moveItem(activeData.sectionId, overData.sectionId, activeData.index, overData.index)
@@ -97,7 +92,7 @@ export function ItemDndProvider({ children }: Props) {
         {children}
         <DragOverlay>
           {activeId && (
-            <div className="bg-white shadow-lg rounded p-2 opacity-80">Перетаскивание...</div>
+            <div className="bg-white shadow-lg rounded p-2 opacity-80">{t('tooltips.drag')}...</div>
           )}
         </DragOverlay>
       </DndContext>

@@ -6,50 +6,35 @@ import type {
   Section,
 } from '../types/resume'
 
-export const defaultContent: Record<SectionType, TextContent | CareerContent | ProjectsContent> = {
+const defaultContent: Record<SectionType, TextContent | CareerContent | ProjectsContent> = {
   text: {
-    text: 'Введите описание...',
+    text: { ru: 'Введите описание...', en: 'Enter description...' },
   },
   career: {
-    role: 'Должность',
-    period: '20XX - настоящее время',
+    role: { ru: 'Должность', en: 'Position' },
+    period: { ru: '20XX - настоящее время', en: '20XX - present' },
     items: [
       {
-        title: 'Проект',
-        description: 'Описание проекта',
+        title: { ru: 'Проект', en: 'Project' },
+        description: { ru: 'Описание проекта', en: 'Project description' },
       },
     ],
   },
   projects: {
     items: [
       {
-        name: 'Название проекта',
-        duration: '3 дня',
-        description: 'Описание проекта',
+        name: { ru: 'Название проекта', en: 'Project name' },
+        duration: { ru: '3 дня', en: '3 days' },
+        description: { ru: 'Описание проекта', en: 'Project description' },
       },
     ],
   },
 }
 
-export const sectionLabels: Record<SectionType, { title: string; description: string }> = {
-  text: {
-    title: 'Текстовая секция',
-    description: 'Для описаний, "О себе" и т.д.',
-  },
-  career: {
-    title: 'Опыт работы',
-    description: 'Должность, период и список проектов',
-  },
-  projects: {
-    title: 'Проекты',
-    description: 'Список проектов или Game Jams',
-  },
-}
-
-export const defaultTitles: Record<SectionType, string> = {
-  text: 'Новая секция',
-  career: 'Опыт работы',
-  projects: 'Проекты',
+const defaultTitles: Record<SectionType, { ru: string; en: string }> = {
+  text: { ru: 'Новая секция', en: 'New Section' },
+  career: { ru: 'Опыт работы', en: 'Experience' },
+  projects: { ru: 'Проекты', en: 'Projects' },
 }
 
 export function createSection(type: SectionType): Section {

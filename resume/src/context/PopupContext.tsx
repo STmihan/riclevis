@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
-// Popup types
 interface LinkPopupData {
   type: 'link'
   initialUrl: string
@@ -72,7 +72,6 @@ export function PopupProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// Popup Renderer Component
 function PopupRenderer({ popup, onClose }: { popup: PopupData; onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] print:hidden">
@@ -83,8 +82,8 @@ function PopupRenderer({ popup, onClose }: { popup: PopupData; onClose: () => vo
   )
 }
 
-// Link Popup
 function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: () => void }) {
+  const { t } = useTranslation()
   const [url, setUrl] = useState(popup.initialUrl)
   const [text, setText] = useState(popup.initialText || '')
 
@@ -95,7 +94,7 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    popup.onSubmit(url.trim(), text.trim() || 'Ссылка')
+    popup.onSubmit(url.trim(), text.trim() || 'Link')
     handleClose()
   }
 
@@ -118,7 +117,7 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
     >
       <div className="p-4">
         <div className="text-sm font-medium text-gray-700 mb-3">
-          {hasExistingLink ? 'Редактировать ссылку' : 'Добавить ссылку'}
+          {hasExistingLink ? t('popup.editLink') : t('popup.addLink')}
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -126,7 +125,7 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Текст ссылки"
+            placeholder={t('popup.linkText')}
             autoFocus
             className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-gray-500 mb-2"
           />
@@ -143,14 +142,14 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
               type="submit"
               className="flex-1 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition-colors"
             >
-              Применить
+              {t('common.apply')}
             </button>
             <button
               type="button"
               onClick={handleClose}
               className="flex-1 py-2 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 transition-colors"
             >
-              Отмена
+              {t('common.cancel')}
             </button>
           </div>
 
@@ -160,7 +159,7 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
               onClick={handleRemove}
               className="w-full mt-2 py-2 text-red-600 text-sm hover:bg-red-50 rounded transition-colors"
             >
-              Удалить ссылку
+              {t('popup.removeLink')}
             </button>
           )}
         </form>
@@ -169,8 +168,9 @@ function LinkPopupContent({ popup, onClose }: { popup: LinkPopupData; onClose: (
   )
 }
 
-// Confirm Popup
 function ConfirmPopupContent({ popup, onClose }: { popup: ConfirmPopupData; onClose: () => void }) {
+  const { t } = useTranslation()
+
   const handleConfirm = () => {
     popup.onConfirm()
     onClose()
@@ -190,13 +190,13 @@ function ConfirmPopupContent({ popup, onClose }: { popup: ConfirmPopupData; onCl
             onClick={handleConfirm}
             className="flex-1 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
           >
-            Подтвердить
+            {t('common.confirm')}
           </button>
           <button
             onClick={onClose}
             className="flex-1 py-2 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 transition-colors"
           >
-            Отмена
+            {t('common.cancel')}
           </button>
         </div>
       </div>
@@ -204,8 +204,8 @@ function ConfirmPopupContent({ popup, onClose }: { popup: ConfirmPopupData; onCl
   )
 }
 
-// Input Popup
 function InputPopupContent({ popup, onClose }: { popup: InputPopupData; onClose: () => void }) {
+  const { t } = useTranslation()
   const [value, setValue] = useState(popup.initialValue || '')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -237,14 +237,14 @@ function InputPopupContent({ popup, onClose }: { popup: InputPopupData; onClose:
               type="submit"
               className="flex-1 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition-colors"
             >
-              Сохранить
+              {t('common.save')}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="flex-1 py-2 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 transition-colors"
             >
-              Отмена
+              {t('common.cancel')}
             </button>
           </div>
         </form>

@@ -2,11 +2,14 @@ import { X, Plus, GripVertical } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { ProjectsContent, ProjectItem } from '../../types/resume'
+import { useTranslation } from 'react-i18next'
+import type { ProjectsContent, ProjectItem, LocalizedString } from '../../types/resume'
 import { EditableText } from '../EditableText'
 import { RichText } from '../RichText'
-import { useResumeContext } from '../../context/ResumeContext'
+import { useResumeStore } from '../../store/resumeStore'
+import { useUIStore } from '../../store/uiStore'
 import { usePopup } from '../../context/PopupContext'
+import { useLocalized, getLocalizedField, setLocalizedField } from '../../utils/localized'
 
 interface SortableProjectItemProps {
   item: ProjectItem
@@ -25,7 +28,10 @@ function SortableProjectItem({
   onChange,
   onEditLink,
 }: SortableProjectItemProps) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const itemId = `project:${sectionId}:${index}`
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -39,23 +45,34 @@ function SortableProjectItem({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  const handleNameChange = (value: string) => {
+    onChange({ name: setLocalizedField(item.name, displayLang, value) })
+  }
+
+  const handleDurationChange = (value: string) => {
+    onChange({ duration: setLocalizedField(item.duration, displayLang, value) })
+  }
+
+  const handleDescriptionChange = (value: string) => {
+    onChange({ description: setLocalizedField(item.description, displayLang, value) })
+  }
+
   return (
     <li ref={setNodeRef} style={{ ...style, marginBottom: '20px' }} className="group relative">
-      {/* Drag handle and Delete button */}
       {isEditMode && (
         <div className="absolute -left-6 top-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity print:hidden">
           <button
             {...attributes}
             {...listeners}
             className="w-5 h-5 rounded bg-gray-100 hover:bg-blue-100 text-gray-400 hover:text-blue-600 flex items-center justify-center cursor-grab active:cursor-grabbing"
-            title="Перетащить"
+            title={t('tooltips.drag')}
           >
             <GripVertical size={10} />
           </button>
           <button
             onClick={onRemove}
             className="w-5 h-5 rounded bg-red-100 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center"
-            title="Удалить"
+            title={t('common.delete')}
           >
             <X size={10} />
           </button>
@@ -64,16 +81,26 @@ function SortableProjectItem({
 
       <div className="flex justify-between" style={{ marginBottom: '5px' }}>
         <span style={{ fontWeight: 'bold' }}>
-          <EditableText value={item.name} onChange={(name) => onChange({ name })} />
+          <EditableText
+            value={isEditMode ? getLocalizedField(item.name, displayLang) : loc(item.name)}
+            onChange={handleNameChange}
+          />
         </span>
         <span style={{ fontStyle: 'italic', color: '#666', fontSize: '13px' }}>
-          <EditableText value={item.duration} onChange={(duration) => onChange({ duration })} />
+          <EditableText
+            value={isEditMode ? getLocalizedField(item.duration, displayLang) : loc(item.duration)}
+            onChange={handleDurationChange}
+          />
         </span>
       </div>
       <div>
-        <RichText value={item.description} onChange={(description) => onChange({ description })} />
+        <RichText
+          value={
+            isEditMode ? getLocalizedField(item.description, displayLang) : loc(item.description)
+          }
+          onChange={handleDescriptionChange}
+        />
 
-        {/* Link */}
         {item.link ? (
           <div className="mt-1">
             {isEditMode ? (
@@ -87,7 +114,7 @@ function SortableProjectItem({
                 <button
                   onClick={() => onChange({ link: undefined })}
                   className="absolute left-full w-4 h-4 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover/link:opacity-100 transition-opacity flex items-center justify-center print:hidden"
-                  title="Удалить ссылку"
+                  title={t('popup.removeLink')}
                 >
                   <X size={8} />
                 </button>
@@ -108,7 +135,7 @@ function SortableProjectItem({
           <button
             onClick={onEditLink}
             className="inline-flex items-center text-gray-400 hover:text-blue-500 ml-1 print:hidden opacity-0 group-hover:opacity-100 transition-opacity align-middle"
-            title="Добавить ссылку"
+            title={t('popup.addLink')}
           >
             <Plus size={12} />
           </button>
@@ -120,16 +147,18 @@ function SortableProjectItem({
 
 interface Props {
   id: string
-  title: string
+  title: LocalizedString
   content: ProjectsContent
 }
 
 export function ProjectsSection({ id, title, content }: Props) {
-  const { updateSection, isEditMode } = useResumeContext()
+  const { updateSection, isEditMode } = useResumeStore()
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const { openLinkPopup } = usePopup()
 
   const handleTitleChange = (newTitle: string) => {
-    updateSection(id, { title: newTitle })
+    updateSection(id, { title: setLocalizedField(title, displayLang, newTitle) })
   }
 
   const handleItemChange = (index: number, updates: Partial<ProjectItem>) => {
@@ -180,7 +209,10 @@ export function ProjectsSection({ id, title, content }: Props) {
           fontWeight: 'bold',
         }}
       >
-        <EditableText value={title} onChange={handleTitleChange} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(title, displayLang) : loc(title)}
+          onChange={handleTitleChange}
+        />
       </h2>
 
       <ul className="list-none" style={{ fontSize: '14px' }}>
@@ -202,13 +234,13 @@ export function ProjectsSection({ id, title, content }: Props) {
           content.items.map((item, i) => (
             <li key={i} style={{ marginBottom: '20px' }}>
               <div className="flex justify-between" style={{ marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>{item.name}</span>
+                <span style={{ fontWeight: 'bold' }}>{loc(item.name)}</span>
                 <span style={{ fontStyle: 'italic', color: '#666', fontSize: '13px' }}>
-                  {item.duration}
+                  {loc(item.duration)}
                 </span>
               </div>
               <div>
-                <RichText value={item.description} onChange={() => {}} />
+                <RichText value={loc(item.description)} onChange={() => {}} />
                 {item.link && (
                   <div className="mt-1">
                     <a

@@ -1,16 +1,43 @@
 import { useRef } from 'react'
-import { useResumeContext } from '../context/ResumeContext'
+import { useTranslation } from 'react-i18next'
+import { useResumeStore } from '../store/resumeStore'
+import { useUIStore } from '../store/uiStore'
+import { useUndoRedo } from '../hooks/useUndoRedo'
+
+const GH_URL = import.meta.env.VITE_GH_URL as string | undefined
+const GH_BRANCH = (import.meta.env.VITE_GH_BRANCH as string) || 'main'
 
 export function EditorToolbar() {
-  const { isEditMode, exportJSON, importJSON, resetToDefault } = useResumeContext()
+  const { t } = useTranslation()
+  const { isEditMode, data, importJSON, resetToDefault } = useResumeStore()
+  const { displayLang, setDisplayLang } = useUIStore()
+  const { canUndo, canRedo, undo, redo } = useUndoRedo()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   if (!isEditMode) return null
 
   const handlePrint = () => {
-    // Open clean version in new tab
     const cleanUrl = window.location.origin + window.location.pathname
     window.open(cleanUrl, '_blank')
+  }
+
+  const handleExport = async () => {
+    const json = JSON.stringify(data, null, 2)
+    await navigator.clipboard.writeText(json)
+
+    if (GH_URL) {
+      const editUrl = `${GH_URL}/edit/${GH_BRANCH}/src/data/resume.json`
+      window.open(editUrl, '_blank')
+      alert(t('alerts.exportCopied'))
+    } else {
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'resume.json'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
   }
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,21 +48,20 @@ export function EditorToolbar() {
     reader.onload = (event) => {
       const content = event.target?.result as string
       if (importJSON(content)) {
-        alert('Данные импортированы!')
+        alert(t('alerts.importSuccess'))
       } else {
-        alert('Ошибка импорта: неверный JSON')
+        alert(t('alerts.importError'))
       }
     }
     reader.readAsText(file)
 
-    // Reset input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
   const handleReset = () => {
-    if (confirm('Сбросить все данные? Это действие нельзя отменить.')) {
+    if (confirm(t('alerts.resetConfirm'))) {
       resetToDefault()
     }
   }
@@ -43,27 +69,59 @@ export function EditorToolbar() {
   return (
     <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between gap-4 z-50 no-print">
       <div className="flex items-center gap-2">
-        <span className="text-gray-700 text-sm font-medium">Редактирование</span>
-        <span className="text-gray-400 text-xs">Автосохранение</span>
+        <span className="text-gray-700 text-sm font-medium">{t('editor.editing')}</span>
       </div>
 
       <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <span className="text-gray-500 text-xs">{t('editor.displayLang')}:</span>
+          <select
+            value={displayLang}
+            onChange={(e) => setDisplayLang(e.target.value)}
+            className="px-2 py-1 text-xs border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-500"
+          >
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+          </select>
+        </div>
+
+        <div className="w-px h-5 bg-gray-200" />
+
+        <button
+          onClick={() => undo()}
+          disabled={!canUndo}
+          className="px-2 py-1.5 text-gray-600 text-xs rounded hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Ctrl+Z"
+        >
+          {t('editor.undo')}
+        </button>
+        <button
+          onClick={() => redo()}
+          disabled={!canRedo}
+          className="px-2 py-1.5 text-gray-600 text-xs rounded hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Ctrl+Y"
+        >
+          {t('editor.redo')}
+        </button>
+
+        <div className="w-px h-5 bg-gray-200" />
+
         <button
           onClick={handlePrint}
           className="px-3 py-1.5 bg-gray-800 text-white text-xs rounded hover:bg-gray-700 transition-colors"
         >
-          Печать
+          {t('editor.print')}
         </button>
 
         <button
-          onClick={exportJSON}
+          onClick={handleExport}
           className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-50 transition-colors"
         >
-          Экспорт
+          {t('editor.export')}
         </button>
 
         <label className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs rounded hover:bg-gray-50 cursor-pointer transition-colors">
-          Импорт
+          {t('editor.import')}
           <input
             ref={fileInputRef}
             type="file"
@@ -77,7 +135,7 @@ export function EditorToolbar() {
           onClick={handleReset}
           className="px-3 py-1.5 text-red-600 text-xs rounded hover:bg-red-50 transition-colors"
         >
-          Сброс
+          {t('editor.reset')}
         </button>
       </div>
     </div>

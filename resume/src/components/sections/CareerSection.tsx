@@ -2,11 +2,14 @@ import { X, Plus, GripVertical } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { CareerContent, CareerItem, LinkItem } from '../../types/resume'
+import { useTranslation } from 'react-i18next'
+import type { CareerContent, CareerItem, LinkItem, LocalizedString } from '../../types/resume'
 import { EditableText } from '../EditableText'
 import { RichText } from '../RichText'
-import { useResumeContext } from '../../context/ResumeContext'
+import { useResumeStore } from '../../store/resumeStore'
+import { useUIStore } from '../../store/uiStore'
 import { usePopup } from '../../context/PopupContext'
+import { useLocalized, getLocalizedField, setLocalizedField } from '../../utils/localized'
 
 interface SortableCareerItemProps {
   item: CareerItem
@@ -27,7 +30,10 @@ function SortableCareerItem({
   onAddLink,
   onEditLink,
 }: SortableCareerItemProps) {
-  const { isEditMode } = useResumeContext()
+  const { t } = useTranslation()
+  const isEditMode = useResumeStore((s) => s.isEditMode)
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const itemId = `career:${sectionId}:${index}`
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -41,6 +47,14 @@ function SortableCareerItem({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  const handleTitleChange = (value: string) => {
+    onChange({ title: setLocalizedField(item.title, displayLang, value) })
+  }
+
+  const handleDescriptionChange = (value: string) => {
+    onChange({ description: setLocalizedField(item.description, displayLang, value) })
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -52,21 +66,20 @@ function SortableCareerItem({
       }}
       className="group relative"
     >
-      {/* Drag handle and Delete button */}
       {isEditMode && (
         <div className="absolute -left-6 top-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity print:hidden">
           <button
             {...attributes}
             {...listeners}
             className="w-5 h-5 rounded bg-gray-100 hover:bg-blue-100 text-gray-400 hover:text-blue-600 flex items-center justify-center cursor-grab active:cursor-grabbing"
-            title="Перетащить"
+            title={t('tooltips.drag')}
           >
             <GripVertical size={10} />
           </button>
           <button
             onClick={onRemove}
             className="w-5 h-5 rounded bg-red-100 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center"
-            title="Удалить"
+            title={t('common.delete')}
           >
             <X size={10} />
           </button>
@@ -74,12 +87,19 @@ function SortableCareerItem({
       )}
 
       <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>
-        <EditableText value={item.title} onChange={(title) => onChange({ title })} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(item.title, displayLang) : loc(item.title)}
+          onChange={handleTitleChange}
+        />
       </div>
       <div style={{ fontSize: '14px', color: '#444' }}>
-        <RichText value={item.description} onChange={(description) => onChange({ description })} />
+        <RichText
+          value={
+            isEditMode ? getLocalizedField(item.description, displayLang) : loc(item.description)
+          }
+          onChange={handleDescriptionChange}
+        />
 
-        {/* Links - flex layout with max 4 per row */}
         {item.links && item.links.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1" style={{ fontSize: '13px' }}>
             {item.links.map((link, j, arr) => {
@@ -105,16 +125,15 @@ function SortableCareerItem({
                           onChange({ links: newLinks.length > 0 ? newLinks : undefined })
                         }}
                         className="ml-0.5 w-4 h-4 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover/link:opacity-100 transition-opacity flex items-center justify-center print:hidden shrink-0"
-                        title="Удалить ссылку"
+                        title={t('popup.removeLink')}
                       >
                         <X size={8} />
                       </button>
-                      {/* Add button after last link */}
                       {isLast && (
                         <button
                           onClick={onAddLink}
                           className="ml-0.5 w-4 h-4 rounded text-gray-400 hover:text-blue-500 hover:bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center print:hidden shrink-0"
-                          title="Добавить ссылку"
+                          title={t('popup.addLink')}
                         >
                           <Plus size={8} />
                         </button>
@@ -137,12 +156,11 @@ function SortableCareerItem({
           </div>
         )}
 
-        {/* Add link button - inline after description when no links */}
         {isEditMode && (!item.links || item.links.length === 0) && (
           <button
             onClick={onAddLink}
             className="inline-flex items-center ml-1 text-gray-400 hover:text-blue-500 print:hidden opacity-0 group-hover:opacity-100 transition-opacity align-middle"
-            title="Добавить ссылку"
+            title={t('popup.addLink')}
           >
             <Plus size={12} />
           </button>
@@ -154,24 +172,30 @@ function SortableCareerItem({
 
 interface Props {
   id: string
-  title: string
+  title: LocalizedString
   content: CareerContent
 }
 
 export function CareerSection({ id, title, content }: Props) {
-  const { updateSection, isEditMode } = useResumeContext()
+  const { updateSection, isEditMode } = useResumeStore()
+  const displayLang = useUIStore((s) => s.displayLang)
+  const loc = useLocalized()
   const { openLinkPopup } = usePopup()
 
   const handleTitleChange = (newTitle: string) => {
-    updateSection(id, { title: newTitle })
+    updateSection(id, { title: setLocalizedField(title, displayLang, newTitle) })
   }
 
   const handleRoleChange = (role: string) => {
-    updateSection(id, { content: { ...content, role } })
+    updateSection(id, {
+      content: { ...content, role: setLocalizedField(content.role, displayLang, role) },
+    })
   }
 
   const handlePeriodChange = (period: string) => {
-    updateSection(id, { content: { ...content, period } })
+    updateSection(id, {
+      content: { ...content, period: setLocalizedField(content.period, displayLang, period) },
+    })
   }
 
   const handleItemChange = (index: number, updates: Partial<CareerItem>) => {
@@ -238,7 +262,10 @@ export function CareerSection({ id, title, content }: Props) {
           fontWeight: 'bold',
         }}
       >
-        <EditableText value={title} onChange={handleTitleChange} />
+        <EditableText
+          value={isEditMode ? getLocalizedField(title, displayLang) : loc(title)}
+          onChange={handleTitleChange}
+        />
       </h2>
 
       <div style={{ marginBottom: '25px' }}>
@@ -251,10 +278,18 @@ export function CareerSection({ id, title, content }: Props) {
           }}
         >
           <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
-            <EditableText value={content.role} onChange={handleRoleChange} />
+            <EditableText
+              value={isEditMode ? getLocalizedField(content.role, displayLang) : loc(content.role)}
+              onChange={handleRoleChange}
+            />
           </span>
           <span style={{ fontStyle: 'italic', fontSize: '14px', color: '#666' }}>
-            <EditableText value={content.period} onChange={handlePeriodChange} />
+            <EditableText
+              value={
+                isEditMode ? getLocalizedField(content.period, displayLang) : loc(content.period)
+              }
+              onChange={handlePeriodChange}
+            />
           </span>
         </div>
 
@@ -285,10 +320,10 @@ export function CareerSection({ id, title, content }: Props) {
                 }}
               >
                 <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>
-                  {item.title}
+                  {loc(item.title)}
                 </div>
                 <div style={{ fontSize: '14px', color: '#444' }}>
-                  <RichText value={item.description} onChange={() => {}} />
+                  <RichText value={loc(item.description)} onChange={() => {}} />
                   {item.links && item.links.length > 0 && (
                     <div
                       className="mt-2 flex flex-wrap gap-x-3 gap-y-1"

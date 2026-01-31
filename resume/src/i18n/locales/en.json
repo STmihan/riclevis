@@ -1,0 +1,63 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "apply": "Apply",
+    "add": "Add",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "switchLang": "Switch language"
+  },
+  "editor": {
+    "editing": "Editing",
+    "autoSave": "Auto-save",
+    "print": "Print",
+    "export": "Export",
+    "import": "Import",
+    "reset": "Reset",
+    "undo": "Undo",
+    "redo": "Redo",
+    "displayLang": "Display"
+  },
+  "sections": {
+    "addSection": "Add Section",
+    "text": "Text Section",
+    "textDesc": "For descriptions, \"About\", etc.",
+    "career": "Career",
+    "careerDesc": "Position, period and project list",
+    "projects": "Projects",
+    "projectsDesc": "List of projects or Game Jams"
+  },
+  "popup": {
+    "addLink": "Add Link",
+    "editLink": "Edit Link",
+    "linkText": "Link text",
+    "linkUrl": "Link URL",
+    "removeLink": "Remove Link"
+  },
+  "tooltips": {
+    "drag": "Drag to reorder",
+    "deleteSection": "Delete section",
+    "clickToEdit": "Click to edit",
+    "addItem": "Add item"
+  },
+  "defaults": {
+    "newSection": "New Section",
+    "newProject": "New project",
+    "newContact": "New contact",
+    "newSkill": "New skill",
+    "language": "Language",
+    "level": "Level",
+    "role": "Position",
+    "period": "20XX - present",
+    "description": "Description"
+  },
+  "alerts": {
+    "importSuccess": "Data imported!",
+    "importError": "Import error: invalid JSON",
+    "resetConfirm": "Reset all data? This cannot be undone.",
+    "exportCopied": "JSON copied to clipboard! Paste it in the opened GitHub page and commit."
+  }
+}

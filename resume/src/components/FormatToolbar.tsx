@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface Position {
   top: number
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function FormatToolbar({ containerRef, onFormat }: Props) {
+  const { t } = useTranslation()
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
 
@@ -22,7 +24,6 @@ export function FormatToolbar({ containerRef, onFormat }: Props) {
       return
     }
 
-    // Check if selection is within our container
     const range = selection.getRangeAt(0)
     if (!containerRef.current.contains(range.commonAncestorContainer)) {
       setVisible(false)
@@ -32,10 +33,9 @@ export function FormatToolbar({ containerRef, onFormat }: Props) {
     const rect = range.getBoundingClientRect()
     const containerRect = containerRef.current.getBoundingClientRect()
 
-    // Position toolbar above the selection
     setPosition({
       top: rect.top - containerRect.top - 40,
-      left: rect.left - containerRect.left + rect.width / 2 - 80, // Center the toolbar
+      left: rect.left - containerRect.left + rect.width / 2 - 80,
     })
     setVisible(true)
   }, [containerRef])
@@ -68,21 +68,21 @@ export function FormatToolbar({ containerRef, onFormat }: Props) {
       <button
         onMouseDown={(e) => handleMouseDown(e, 'bold')}
         className="w-8 h-8 flex items-center justify-center hover:bg-gray-700 rounded font-bold"
-        title="Жирный (Ctrl+B)"
+        title={`Bold (Ctrl+B)`}
       >
         B
       </button>
       <button
         onMouseDown={(e) => handleMouseDown(e, 'italic')}
         className="w-8 h-8 flex items-center justify-center hover:bg-gray-700 rounded italic"
-        title="Курсив (Ctrl+I)"
+        title={`Italic (Ctrl+I)`}
       >
         I
       </button>
       <button
         onMouseDown={(e) => handleMouseDown(e, 'underline')}
         className="w-8 h-8 flex items-center justify-center hover:bg-gray-700 rounded underline"
-        title="Подчёркивание (Ctrl+U)"
+        title={`Underline (Ctrl+U)`}
       >
         U
       </button>
@@ -90,7 +90,7 @@ export function FormatToolbar({ containerRef, onFormat }: Props) {
       <button
         onMouseDown={(e) => handleMouseDown(e, 'link')}
         className="w-8 h-8 flex items-center justify-center hover:bg-gray-700 rounded"
-        title="Ссылка (Ctrl+K)"
+        title={`${t('popup.addLink')} (Ctrl+K)`}
       >
         <Link size={16} />
       </button>

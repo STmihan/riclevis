@@ -31,6 +31,9 @@ jobs:
 
       - name: Build
         run: bun run build
+        env:
+          VITE_GH_URL: ${{ github.server_url }}/${{ github.repository }}
+          VITE_GH_BRANCH: ${{ github.ref_name }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,1 +1,1 @@
-# [LINK](https:/riclevis.art)
+# [LINK](https://riclevis.art)

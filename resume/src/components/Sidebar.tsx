@@ -18,8 +18,7 @@ import { useResumeStore } from '../store/resumeStore'
 import { useUIStore } from '../store/uiStore'
 import { usePopup } from '../context/PopupContext'
 import { useLocalized, getLocalizedField, setLocalizedField } from '../utils/localized'
-
-const AVAILABLE_ICONS = ['email.svg', 'telegram.svg', 'artstation.svg', 'place.svg']
+import { AVAILABLE_ICONS } from 'virtual:icons'
 
 function SectionHeader({ title, onAdd }: { title: string; onAdd?: () => void }) {
   const { t } = useTranslation()

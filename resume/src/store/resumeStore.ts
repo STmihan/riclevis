@@ -31,24 +31,18 @@ interface ResumeState {
 }
 
 const loadInitialData = async (): Promise<Resume> => {
-  if (IS_PRODUCTION) {
-    try {
-      const response = await fetch('/resume.json')
-      return response.json()
-    } catch {
-      // Fall back to import if fetch fails
+  if (!IS_PRODUCTION) {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch {
+        // Invalid JSON, use default
+      }
     }
   }
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored) {
-    try {
-      return JSON.parse(stored)
-    } catch {
-      // Invalid JSON, use default
-    }
-  }
-  const defaultData = await import('../data/resume.json')
-  return defaultData.default as Resume
+  const response = await fetch('/resume.json')
+  return response.json()
 }
 
 export const useResumeStore = create<ResumeState>()(
@@ -230,8 +224,9 @@ export const useResumeStore = create<ResumeState>()(
 
       resetToDefault: async () => {
         localStorage.removeItem(STORAGE_KEY)
-        const defaultData = await import('../data/resume.json')
-        set({ data: defaultData.default as Resume })
+        const response = await fetch('/resume.json')
+        const defaultData = await response.json()
+        set({ data: defaultData as Resume })
       },
 
       importJSON: (json) => {

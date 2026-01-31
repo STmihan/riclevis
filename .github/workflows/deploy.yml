@@ -27,11 +27,9 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        working-directory: ./resume
         run: bun install --frozen-lockfile
 
       - name: Build
-        working-directory: ./resume
         run: bun run build
 
       - name: Setup Pages
@@ -40,7 +38,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./resume/dist
+          path: ./dist
 
   deploy:
     environment:

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анастасия Дягелева - Резюме</title>
+    <style>
+        :root {
+            --primary-text: #222;
+            --secondary-text: #555;
+            --accent-color: #333;
+            --sidebar-bg: #f4f4f4;
+            --bg-color: #fff;
+            --line-height: 1.5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #e0e0e0;
+            color: var(--primary-text);
+            line-height: var(--line-height);
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .resume-container {
+            width: 210mm;
+            height: 297mm;
+            background: var(--bg-color);
+            display: grid;
+            grid-template-columns: 70mm 1fr;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            padding: 30px 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .qr-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background-color: #fff;
+            border: 2px dashed #999;
+            margin: 0 auto 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .qr-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .qr-link {
+            font-size: 12px;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-bottom: 1px solid var(--secondary-text);
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .contact-list div {
+            margin-bottom: 12px;
+            font-size: 14px;
+            word-wrap: break-word;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Отступ между иконкой и текстом */
+        }
+        
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+        }
+
+        .contact-list a {
+            color: var(--primary-text);
+            text-decoration: none;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-list li {
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            padding: 40px 40px;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--secondary-text);
+            font-weight: 300;
+        }
+
+        .section-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .experience-block {
+            margin-bottom: 25px;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 15px;
+        }
+
+        .job-role {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .job-date {
+            font-style: italic;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .summary-text {
+            font-size: 14px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .project-highlight {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #ddd;
+        }
+        
+        .project-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .project-desc {
+            font-size: 14px;
+            color: #444;
+        }
+
+        .other-projects {
+            margin-top: 20px;
+            font-size: 14px;
+            font-style: italic;
+            color: #666;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        .jam-list {
+            list-style: none; 
+            font-size: 14px;
+        }
+        
+        .jam-item {
+            margin-bottom: 20px;
+        }
+
+        .jam-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .jam-name {
+            font-weight: bold;
+        }
+        
+        .jam-duration {
+            font-style: italic;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .project-link {
+            color: #555;
+            text-decoration: underline;
+            font-size: 13px;
+        }
+
+        /* PRINT STYLES */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                margin: 0;
+            }
+            .resume-container {
+                width: 210mm;
+                height: 297mm;
+                box-shadow: none;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            /* Скрываем подчеркивания ссылок, делаем их черными */
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="resume-container">
+        
+        <aside class="sidebar">
+            <div class="qr-section">
+                <img src="qr.png" alt="QR Code" class="qr-img">
+                <a href="https://www.artstation.com/riclevis" target="_blank" class="qr-link">Portfolio</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Контакты</div>
+                <div class="contact-list">
+                    <div>
+                        <img src="place.svg" alt="Location" class="contact-icon">
+                        <span>Москва / Удаленно</span>
+                    </div>
+                    <div>
+                        <img src="telegram.svg" alt="Telegram" class="contact-icon">
+                        <a href="https://t.me/RicLevis">@RicLevis</a>
+                    </div>
+                    <div>
+                        <img src="artstation.svg" alt="ArtStation" class="contact-icon">
+                        <a href="https://www.artstation.com/riclevis">artstation.com/riclevis</a>
+                    </div>
+                    <div>
+                        <img src="email.svg" alt="Email" class="contact-icon">
+                        <a href="mailto:diageleva.ap@gmail.com">diageleva.ap@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Навыки</div>
+                <ul class="skill-list">
+                    <li>Character Design</li>
+                    <li>Concept Art</li>
+                    <li>Pixel Art</li>
+                    <li>Props Design</li>
+                    <li>UI Design</li>
+                    <li>Environment Art</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Софт</div>
+                <ul class="skill-list">
+                    <li>Photoshop</li>
+                    <li>Aseprite</li>
+                    <li>Clip Studio Paint</li>
+                    <li>Unity</li>
+                    <li>Unreal Engine</li>
+                    <li>Godot</li>
+                    <li>RPG Maker</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Языки</div>
+                <ul class="skill-list">
+                    <li><strong>Русский:</strong> Родной</li>
+                    <li><strong>Английский:</strong> A2</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Анастасия<br>Дягелева</h1>
+                <div class="subtitle">Junior 2D Artist / Concept Artist</div>
+            </header>
+
+            <section>
+                <h2 class="section-title">О себе</h2>
+                <p class="summary-text">
+                    Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей.
+                    С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов.
+                    Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="section-title">Опыт работы</h2>
+                
+                <div class="experience-block">
+                    <div class="job-header">
+                        <span class="job-role">Freelance Concept Artist</span>
+                        <span class="job-date">2024 — Наст. время</span>
+                    </div>
+
+                    <div class="project-highlight">
+                        <div class="project-title">Дизайн персонажей для инди-проектов</div>
+                        <div class="project-desc">
+                            Создание концептов персонажей по брифам заказчиков: reference sheets, проработка костюмов, аксессуаров и деталей. Выполнено <strong>16+ проектов</strong>.
+                            <br>
+                            <a href="https://www.artstation.com/riclevis" class="project-link" target="_blank">Проект 1</a> ·
+                            <a href="https://www.artstation.com/riclevis" class="project-link" target="_blank">Проект 2</a> ·
+                            <a href="https://www.artstation.com/riclevis" class="project-link" target="_blank">Проект 3</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="section-title">Game Jams</h2>
+                <ul class="jam-list">
+                    
+                    <li class="jam-item">
+                        <div class="jam-header">
+                            <span class="jam-name">GMTK Game Jam 2025</span>
+                            <span class="jam-duration">4 дня</span>
+                        </div>
+                        <div>
+                            Игра про работу в офисе (стилистика "Papers, Please"). Отрисовала 2 тайлсета (офис и дом), анимации, а также арт для мини-игры. Графика намеренно мрачная и повседневная.
+                            <br>
+                            <a href="#" class="project-link" target="_blank">Ссылка на проект (ArtStation)</a> </div>
+                    </li>
+
+                    <li class="jam-item">
+                        <div class="jam-header">
+                            <span class="jam-name">Siberian Game Jam</span>
+                            <span class="jam-duration">3 дня</span>
+                        </div>
+                        <div>
+                            Разработала визуал для мрачной деревни рядом с шахтой. Создала top-down тайлсет зданий, персонажей с анимациями и пользовательский интерфейс (UI).
+                            <br>
+                            <a href="#" class="project-link" target="_blank">Ссылка на проект (ArtStation)</a> </div>
+                    </li>
+
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+</html>

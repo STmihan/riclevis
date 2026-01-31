@@ -18,6 +18,13 @@ interface ConfirmPopupData {
   onConfirm: () => void
 }
 
+interface AlertPopupData {
+  type: 'alert'
+  title: string
+  message: string
+  onClose?: () => void
+}
+
 interface InputPopupData {
   type: 'input'
   title: string
@@ -26,11 +33,12 @@ interface InputPopupData {
   onSubmit: (value: string) => void
 }
 
-type PopupData = LinkPopupData | ConfirmPopupData | InputPopupData
+type PopupData = LinkPopupData | ConfirmPopupData | AlertPopupData | InputPopupData
 
 interface PopupContextType {
   openLinkPopup: (data: Omit<LinkPopupData, 'type'>) => void
   openConfirmPopup: (data: Omit<ConfirmPopupData, 'type'>) => void
+  openAlertPopup: (data: Omit<AlertPopupData, 'type'>) => void
   openInputPopup: (data: Omit<InputPopupData, 'type'>) => void
   closePopup: () => void
 }
@@ -56,6 +64,10 @@ export function PopupProvider({ children }: { children: ReactNode }) {
     setPopup({ type: 'confirm', ...data })
   }, [])
 
+  const openAlertPopup = useCallback((data: Omit<AlertPopupData, 'type'>) => {
+    setPopup({ type: 'alert', ...data })
+  }, [])
+
   const openInputPopup = useCallback((data: Omit<InputPopupData, 'type'>) => {
     setPopup({ type: 'input', ...data })
   }, [])
@@ -65,7 +77,7 @@ export function PopupProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <PopupContext.Provider value={{ openLinkPopup, openConfirmPopup, openInputPopup, closePopup }}>
+    <PopupContext.Provider value={{ openLinkPopup, openConfirmPopup, openAlertPopup, openInputPopup, closePopup }}>
       {children}
       {popup && <PopupRenderer popup={popup} onClose={closePopup} />}
     </PopupContext.Provider>
@@ -77,6 +89,7 @@ function PopupRenderer({ popup, onClose }: { popup: PopupData; onClose: () => vo
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] print:hidden">
       {popup.type === 'link' && <LinkPopupContent popup={popup} onClose={onClose} />}
       {popup.type === 'confirm' && <ConfirmPopupContent popup={popup} onClose={onClose} />}
+      {popup.type === 'alert' && <AlertPopupContent popup={popup} onClose={onClose} />}
       {popup.type === 'input' && <InputPopupContent popup={popup} onClose={onClose} />}
     </div>
   )
@@ -199,6 +212,32 @@ function ConfirmPopupContent({ popup, onClose }: { popup: ConfirmPopupData; onCl
             {t('common.cancel')}
           </button>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function AlertPopupContent({ popup, onClose }: { popup: AlertPopupData; onClose: () => void }) {
+  const handleClose = () => {
+    popup.onClose?.()
+    onClose()
+  }
+
+  return (
+    <div
+      className="bg-white rounded border border-gray-200 shadow-lg w-[320px] max-w-[90vw]"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="p-4">
+        <div className="text-sm font-medium text-gray-700 mb-2">{popup.title}</div>
+        <p className="text-sm text-gray-500 mb-4">{popup.message}</p>
+
+        <button
+          onClick={handleClose}
+          className="w-full py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+        >
+          OK
+        </button>
       </div>
     </div>
   )

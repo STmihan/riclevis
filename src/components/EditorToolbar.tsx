@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useResumeStore } from '../store/resumeStore'
 import { useUIStore } from '../store/uiStore'
 import { useUndoRedo } from '../hooks/useUndoRedo'
+import { usePopup } from '../context/PopupContext'
 
 const GH_URL = import.meta.env.VITE_GH_URL as string | undefined
 const GH_BRANCH = (import.meta.env.VITE_GH_BRANCH as string) || 'main'
@@ -12,6 +13,7 @@ export function EditorToolbar() {
   const { isEditMode, data, importJSON, resetToDefault } = useResumeStore()
   const { displayLang, setDisplayLang } = useUIStore()
   const { canUndo, canRedo, undo, redo } = useUndoRedo()
+  const { openAlertPopup } = usePopup()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   if (!isEditMode) return null
@@ -26,9 +28,14 @@ export function EditorToolbar() {
     await navigator.clipboard.writeText(json)
 
     if (GH_URL) {
-      const editUrl = `${GH_URL}/edit/${GH_BRANCH}/src/data/resume.json`
-      window.open(editUrl, '_blank')
-      alert(t('alerts.exportCopied'))
+      const editUrl = `${GH_URL}/edit/${GH_BRANCH}/public/resume.json`
+      openAlertPopup({
+        title: t('editor.export'),
+        message: t('alerts.exportCopied'),
+        onClose: () => {
+          window.open(editUrl, '_blank')
+        },
+      })
     } else {
       const blob = new Blob([json], { type: 'application/json' })
       const url = URL.createObjectURL(blob)

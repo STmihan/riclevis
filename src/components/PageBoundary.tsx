@@ -18,6 +18,7 @@ export function PageBoundary({ containerRef, contentRef, showBoundaries = false 
     const updatePageCount = () => {
       if (containerRef.current && measureRef.current) {
         const a4HeightPx = measureRef.current.offsetHeight
+        if (a4HeightPx === 0) return
         const measureTarget = contentRef?.current || containerRef.current
         const contentHeight = measureTarget.scrollHeight
         const pages = Math.max(1, Math.ceil(contentHeight / a4HeightPx))

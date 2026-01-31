@@ -34,9 +34,11 @@ interface Props {
   subtitle: LocalizedString
   sections: Section[]
   contentRef?: React.RefObject<HTMLDivElement | null>
+  isMobile?: boolean
+  renderPart?: 'all' | 'header' | 'sections'
 }
 
-export function MainContent({ name, subtitle, sections, contentRef }: Props) {
+export function MainContent({ name, subtitle, sections, contentRef, isMobile, renderPart = 'all' }: Props) {
   const { t } = useTranslation()
   const { updateName, updateSubtitle, updateSection, reorderSections, isEditMode } =
     useResumeStore()
@@ -126,50 +128,59 @@ export function MainContent({ name, subtitle, sections, contentRef }: Props) {
 
   const sectionIds = sections.map((s) => s.id)
 
-  return (
-    <main style={{ padding: '40px' }} className="flex-1">
-      <div ref={contentRef}>
-        <header style={{ marginBottom: '30px' }}>
-          <h1
-            style={{
-              fontSize: '32px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '5px',
-              lineHeight: 1.1,
-              fontWeight: 'bold',
-            }}
-          >
-            <EditableText
-              value={isEditMode ? getLocalizedField(name, displayLang) : loc(name)}
-              onChange={(value) => updateName(setLocalizedField(name, displayLang, value))}
-              multiline
-              className="whitespace-pre-line"
-            />
-          </h1>
-          <div style={{ fontSize: '18px', color: '#555', fontWeight: 300 }}>
-            <EditableText
-              value={isEditMode ? getLocalizedField(subtitle, displayLang) : loc(subtitle)}
-              onChange={(value) => updateSubtitle(setLocalizedField(subtitle, displayLang, value))}
-            />
-          </div>
-        </header>
+  const showHeader = renderPart === 'all' || renderPart === 'header'
+  const showSections = renderPart === 'all' || renderPart === 'sections'
 
-        {isEditMode ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
-              {sections.map((section) => renderSection(section))}
-            </SortableContext>
-          </DndContext>
-        ) : (
-          sections.map((section) => renderSection(section))
+  return (
+    <main style={{ padding: isMobile ? '24px 20px' : '40px' }} className="flex-1">
+      <div ref={contentRef}>
+        {showHeader && (
+          <header style={{ marginBottom: isMobile ? '24px' : '30px' }}>
+            <h1
+              style={{
+                fontSize: isMobile ? '26px' : '32px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '5px',
+                lineHeight: 1.1,
+                fontWeight: 'bold',
+              }}
+            >
+              <EditableText
+                value={isEditMode ? getLocalizedField(name, displayLang) : loc(name)}
+                onChange={(value) => updateName(setLocalizedField(name, displayLang, value))}
+                multiline
+                className="whitespace-pre-line"
+              />
+            </h1>
+            <div style={{ fontSize: '18px', color: '#555', fontWeight: 300 }}>
+              <EditableText
+                value={isEditMode ? getLocalizedField(subtitle, displayLang) : loc(subtitle)}
+                onChange={(value) => updateSubtitle(setLocalizedField(subtitle, displayLang, value))}
+              />
+            </div>
+          </header>
+        )}
+
+        {showSections && (
+          <>
+            {isEditMode ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+                  {sections.map((section) => renderSection(section))}
+                </SortableContext>
+              </DndContext>
+            ) : (
+              sections.map((section) => renderSection(section))
+            )}
+          </>
         )}
       </div>
-      <AddSectionButton />
+      {showSections && <AddSectionButton />}
     </main>
   )
 }

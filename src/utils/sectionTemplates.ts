@@ -43,6 +43,6 @@ export function createSection(type: SectionType): Section {
     id,
     type,
     title: defaultTitles[type],
-    content: JSON.parse(JSON.stringify(defaultContent[type])), // Deep clone
+    content: JSON.parse(JSON.stringify(defaultContent[type])),
   }
 }

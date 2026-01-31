@@ -152,7 +152,7 @@
       "content": {
         "text": {
           "ru": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов.",
-          "en": "Concept artist and 2D artist specializing in character design. Since 2024, completed 16+ commercial projects for indie developers and private clients. Experienced with game engines (Unity, Unreal, Godot) and adapting graphics to technical requirements. Aspiring game jam participant."
+          "en": "Concept artist and 2D artist specializing in character design. Since 2024, completed 16+ commercial commissions for indie developers and private clients. Experienced with game engines (Unity, Unreal, Godot) and adapting graphics to technical requirements. Novice game jam participant."
         }
       }
     },
@@ -180,7 +180,7 @@
             },
             "description": {
               "ru": "Создание концептов персонажей по брифам заказчиков: reference sheets, проработка костюмов, аксессуаров и деталей. Выполнено <strong>16+ проектов</strong>",
-              "en": "Creating character concepts based on client briefs: reference sheets, costume design, accessories and details. Completed 16+ projects"
+              "en": "Creating character concepts based on client briefs: reference sheets, costume design, accessories and details. Completed <strong>16+ projects</strong>"
             },
             "links": [
               {
@@ -238,7 +238,7 @@
             },
             "description": {
               "ru": "Разработала визуал для мрачной деревни рядом с шахтой. Создала top-down тайлсет зданий, персонажей с анимациями и пользовательский интерфейс (UI).",
-              "en": "Developed visuals for a gloomy mining village. Created top-down building tileset, character animations, and user interface (UI)."
+              "en": "Developed visuals for a gloomy village near a mine. Created top-down building tileset, characters with animations, and user interface (UI)."
             },
             "link": {
               "url": "#",

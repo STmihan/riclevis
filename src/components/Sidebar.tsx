@@ -352,9 +352,10 @@ function SortableLanguage({
 
 interface Props {
   data: SidebarType
+  isMobile?: boolean
 }
 
-export function Sidebar({ data }: Props) {
+export function Sidebar({ data, isMobile }: Props) {
   const { t } = useTranslation()
   const {
     updatePortfolio,
@@ -483,6 +484,264 @@ export function Sidebar({ data }: Props) {
   const skillIds = data.skills.map((_, i) => `skill-${i}`)
   const softwareIds = data.software.map((_, i) => `software-${i}`)
   const langIds = data.languages.map((_, i) => `lang-${i}`)
+
+  if (isMobile) {
+    return (
+      <aside className="bg-[#f4f4f4] border-t border-[#ddd] overflow-visible px-5 py-6">
+        <div className="text-center mb-6">
+          {isEditMode ? (
+            <div className="group/portfolio relative inline-block">
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: '#555',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  borderBottom: '1px solid #555',
+                  fontWeight: 'bold',
+                }}
+              >
+                <EditableText
+                  value={data.portfolioLabel}
+                  onChange={(label) => updatePortfolio(data.portfolioUrl, label)}
+                />
+              </span>
+              <button
+                onClick={handleEditPortfolioLink}
+                className="absolute left-full ml-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 opacity-0 group-hover/portfolio:opacity-100 transition-opacity"
+                title={t('popup.editLink')}
+              >
+                <Settings size={12} />
+              </button>
+            </div>
+          ) : (
+            <a
+              href={data.portfolioUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '14px',
+                color: '#555',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                textDecoration: 'none',
+                borderBottom: '1px solid #555',
+                fontWeight: 'bold',
+              }}
+            >
+              {data.portfolioLabel}
+            </a>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+          <div>
+            <SectionHeader title={loc(data.labels.contacts)} onAdd={handleAddContact} />
+            {isEditMode ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleContactDragEnd}
+              >
+                <SortableContext items={contactIds} strategy={verticalListSortingStrategy}>
+                  {data.contacts.map((contact, i) => (
+                    <SortableContact
+                      key={i}
+                      contact={contact}
+                      index={i}
+                      onUpdate={(updates) => handleContactUpdate(i, updates)}
+                      onDelete={() => updateContacts(data.contacts.filter((_, j) => j !== i))}
+                      onEditLink={() => handleEditContactLink(i)}
+                      iconPickerOpen={iconPickerOpen}
+                      setIconPickerOpen={setIconPickerOpen}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            ) : (
+              data.contacts.map((contact, i) => (
+                <div
+                  key={i}
+                  style={{
+                    marginBottom: '10px',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <img
+                    src={`/icons/${contact.icon}`}
+                    alt=""
+                    className="shrink-0"
+                    style={{ width: '14px', height: '14px', opacity: 0.7 }}
+                  />
+                  {contact.url ? (
+                    <a
+                      href={contact.url}
+                      className="truncate flex-1 min-w-0"
+                      style={{ color: '#222', textDecoration: 'none' }}
+                      title={loc(contact.label)}
+                    >
+                      {loc(contact.label)}
+                    </a>
+                  ) : (
+                    <span className="truncate flex-1 min-w-0" title={loc(contact.label)}>
+                      {loc(contact.label)}
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          <div>
+            <SectionHeader
+              title={loc(data.labels.languages)}
+              onAdd={() =>
+                updateLanguages([
+                  ...data.languages,
+                  {
+                    name: { ru: t('defaults.language'), en: t('defaults.language') },
+                    level: { ru: t('defaults.level'), en: t('defaults.level') },
+                  },
+                ])
+              }
+            />
+            {isEditMode ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleLanguageDragEnd}
+              >
+                <SortableContext items={langIds} strategy={verticalListSortingStrategy}>
+                  <ul className="list-none">
+                    {data.languages.map((lang, i) => (
+                      <SortableLanguage
+                        key={i}
+                        lang={lang}
+                        index={i}
+                        onChangeName={(name) => handleLanguageChange(i, 'name', name)}
+                        onChangeLevel={(level) => handleLanguageChange(i, 'level', level)}
+                        onDelete={() => updateLanguages(data.languages.filter((_, j) => j !== i))}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <ul className="list-none">
+                {data.languages.map((lang, i) => (
+                  <li
+                    key={i}
+                    className="truncate"
+                    style={{ marginBottom: '5px', fontSize: '13px' }}
+                    title={`${loc(lang.name)}: ${loc(lang.level)}`}
+                  >
+                    <strong>{loc(lang.name)}:</strong> {loc(lang.level)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <SectionHeader
+              title={loc(data.labels.skills)}
+              onAdd={() =>
+                updateSkills([
+                  ...data.skills,
+                  { ru: t('defaults.newSkill'), en: t('defaults.newSkill') },
+                ])
+              }
+            />
+            {isEditMode ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleSkillDragEnd}
+              >
+                <SortableContext items={skillIds} strategy={verticalListSortingStrategy}>
+                  <ul className="list-none">
+                    {data.skills.map((skill, i) => (
+                      <SortableItem
+                        key={i}
+                        item={skill}
+                        index={i}
+                        prefix="skill"
+                        onChange={(value) => handleSkillChange(i, value)}
+                        onDelete={() => updateSkills(data.skills.filter((_, j) => j !== i))}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <ul className="list-none">
+                {data.skills.map((skill, i) => (
+                  <li
+                    key={i}
+                    className="truncate"
+                    style={{ marginBottom: '5px', fontSize: '13px' }}
+                    title={loc(skill)}
+                  >
+                    {loc(skill)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <SectionHeader
+              title={loc(data.labels.software)}
+              onAdd={() =>
+                updateSoftware([
+                  ...data.software,
+                  { ru: t('defaults.newSkill'), en: t('defaults.newSkill') },
+                ])
+              }
+            />
+            {isEditMode ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleSoftwareDragEnd}
+              >
+                <SortableContext items={softwareIds} strategy={verticalListSortingStrategy}>
+                  <ul className="list-none">
+                    {data.software.map((soft, i) => (
+                      <SortableItem
+                        key={i}
+                        item={soft}
+                        index={i}
+                        prefix="software"
+                        onChange={(value) => handleSoftwareChange(i, value)}
+                        onDelete={() => updateSoftware(data.software.filter((_, j) => j !== i))}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <ul className="list-none">
+                {data.software.map((soft, i) => (
+                  <li
+                    key={i}
+                    className="truncate"
+                    style={{ marginBottom: '5px', fontSize: '13px' }}
+                    title={loc(soft)}
+                  >
+                    {loc(soft)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </aside>
+    )
+  }
 
   return (
     <aside

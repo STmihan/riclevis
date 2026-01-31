@@ -32,7 +32,6 @@ export function resumePlugin(): Plugin {
     },
 
     buildStart() {
-      // Scan icons directory
       const iconsDir = join(config.root, 'public', 'icons')
       try {
         icons = readdirSync(iconsDir)
@@ -59,12 +58,10 @@ export function resumePlugin(): Plugin {
     transformIndexHtml: {
       order: 'pre',
       handler(html) {
-        // Only transform during build
         if (config.command !== 'build') {
           return html
         }
 
-        // Read resume.json
         const resumePath = join(config.root, 'public', 'resume.json')
         let resume: ResumeData
         try {
@@ -74,26 +71,22 @@ export function resumePlugin(): Plugin {
           return html
         }
 
-        // Extract SEO data (English only)
         const name = resume.name.en.replace(/\n/g, ' ')
         const subtitle = resume.subtitle.en
         const aboutSection = resume.sections.find((s) => s.id === 'about')
         const description = aboutSection?.content.text?.en || subtitle
         const portfolioUrl = resume.sidebar.portfolioUrl
 
-        // Generate meta tags
         const metaTags = `
     <title>${name} - ${subtitle}</title>
     <meta name="description" content="${escapeHtml(description)}" />
     <meta name="author" content="${escapeHtml(name)}" />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="profile" />
     <meta property="og:title" content="${escapeHtml(name)} - ${escapeHtml(subtitle)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:site_name" content="${escapeHtml(name)} Resume" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="${escapeHtml(name)} - ${escapeHtml(subtitle)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
@@ -115,10 +108,7 @@ export function resumePlugin(): Plugin {
     )}
     </script>`
 
-        // Replace title and inject meta tags
-        return html
-          .replace(/<title>.*?<\/title>/, '')
-          .replace('</head>', `${metaTags}\n  </head>`)
+        return html.replace(/<title>.*?<\/title>/, '').replace('</head>', `${metaTags}\n  </head>`)
       },
     },
   }

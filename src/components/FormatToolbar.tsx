@@ -51,7 +51,7 @@ export function FormatToolbar({ containerRef, onFormat }: Props) {
     e: React.MouseEvent,
     command: 'bold' | 'italic' | 'underline' | 'link'
   ) => {
-    e.preventDefault() // Prevent losing selection
+    e.preventDefault()
     onFormat(command)
   }
 

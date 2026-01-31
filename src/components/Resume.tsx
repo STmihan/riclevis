@@ -7,6 +7,7 @@ import { ItemDndProvider } from './ItemDndContext'
 import { useResumeStore } from '../store/resumeStore'
 
 const RESUME_WIDTH_PX = 794 // 210mm at 96dpi
+const MOBILE_BREAKPOINT = 768
 
 interface Props {
   data: ResumeType
@@ -19,29 +20,37 @@ export function Resume({ data }: Props) {
   const isEditMode = useResumeStore((s) => s.isEditMode)
   const [scale, setScale] = useState(1)
   const [height, setHeight] = useState<number | undefined>(undefined)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const updateScale = () => {
-      const padding = window.innerWidth / 6
-      const availableWidth = window.innerWidth - padding * 2
-      const newScale = availableWidth < RESUME_WIDTH_PX ? availableWidth / RESUME_WIDTH_PX : 1
-      setScale(newScale)
+    const updateLayout = () => {
+      const mobile = window.innerWidth < MOBILE_BREAKPOINT
+      setIsMobile(mobile)
 
-      if (containerRef.current && newScale < 1) {
-        setHeight(containerRef.current.offsetHeight * newScale)
-      } else {
+      if (mobile) {
+        setScale(1)
         setHeight(undefined)
+      } else {
+        const padding = window.innerWidth / 6
+        const availableWidth = window.innerWidth - padding * 2
+        const newScale = availableWidth < RESUME_WIDTH_PX ? availableWidth / RESUME_WIDTH_PX : 1
+        setScale(newScale)
+
+        if (containerRef.current && newScale < 1) {
+          setHeight(containerRef.current.offsetHeight * newScale)
+        } else {
+          setHeight(undefined)
+        }
       }
     }
 
-    updateScale()
-    window.addEventListener('resize', updateScale)
-    return () => window.removeEventListener('resize', updateScale)
+    updateLayout()
+    window.addEventListener('resize', updateLayout)
+    return () => window.removeEventListener('resize', updateLayout)
   }, [])
 
-  // Update height when content changes
   useEffect(() => {
-    if (containerRef.current && scale < 1) {
+    if (!isMobile && containerRef.current && scale < 1) {
       const observer = new ResizeObserver(() => {
         if (containerRef.current) {
           setHeight(containerRef.current.offsetHeight * scale)
@@ -50,17 +59,39 @@ export function Resume({ data }: Props) {
       observer.observe(containerRef.current)
       return () => observer.disconnect()
     }
-  }, [scale])
+  }, [scale, isMobile])
 
   return (
     <ItemDndProvider>
+      {isMobile && (
+        <div className="resume-mobile bg-white min-h-screen no-print">
+          <MainContent
+            name={data.name}
+            subtitle={data.subtitle}
+            sections={data.sections}
+            isMobile
+            renderPart="header"
+          />
+          <Sidebar data={data.sidebar} isMobile />
+          <MainContent
+            name={data.name}
+            subtitle={data.subtitle}
+            sections={data.sections}
+            contentRef={contentRef}
+            isMobile
+            renderPart="sections"
+          />
+        </div>
+      )}
+
       <div
         ref={wrapperRef}
-        className="print:!h-auto print:!w-auto"
+        className="desktop-layout print:!h-auto print:!w-auto"
         style={{
           height: height ? `${height}px` : 'auto',
           width: scale < 1 ? `${RESUME_WIDTH_PX * scale}px` : 'auto',
           margin: '0 auto',
+          display: isMobile ? 'none' : 'block',
         }}
       >
         <div

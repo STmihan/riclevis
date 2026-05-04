@@ -190,10 +190,22 @@
               {
                 "url": "https://www.artstation.com/artwork/2BEyzv",
                 "text": "Project 2"
-              },
+              }
+            ]
+          },
+          {
+            "title": {
+              "ru": "New project",
+              "en": "Main Menu Design for Old Modern"
+            },
+            "description": {
+              "ru": "Description",
+              "en": "Designed and illustrated a main menu based on the project's art direction."
+            },
+            "links": [
               {
-                "url": "https://www.artstation.com/artwork/nJmWl6",
-                "text": "Project 3"
+                "url": "https://po4ti-cobalt.itch.io/old-modern",
+                "text": "View Project"
               }
             ]
           }

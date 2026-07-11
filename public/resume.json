@@ -151,7 +151,7 @@
       },
       "content": {
         "text": {
-          "ru": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования. Начинающий участник геймджемов.",
+          "ru": "Концепт-художник и 2D-артист, специализируюсь на дизайне персонажей. <br>С 2024 года выполнила 16+ коммерческих заказов для инди-разработчиков и частных клиентов. Умею работать с игровыми движками (Unity, Unreal, Godot) и адаптировать графику под технические требования.&nbsp;",
           "en": "Concept artist and 2D artist specializing in character design. Since 2024, completed 16+ commercial commissions for indie developers and private clients. Experienced with game engines (Unity, Unreal, Godot) and adapting graphics to technical requirements. Novice game jam participant."
         }
       }
@@ -195,11 +195,11 @@
           },
           {
             "title": {
-              "ru": "Дизайн главного меню для Old Modern",
+              "ru": "\"I Wanna Unveil The Old Modern\"",
               "en": "Main Menu Design for Old Modern"
             },
             "description": {
-              "ru": "Разработала и проиллюстрировала главное меню в соответствии с художественным замыслом проекта.Также создавала спрайты боссов и анимации для игровых сцен.",
+              "ru": "Работала над визуальным стилем (пиксель арт) главного меню и промо артами игры, разработала концепт-арт главного героя. Создавала спрайты персонажей и часть боевых анимаций.",
               "en": "Designed and illustrated the main menu in accordance with the project's art direction. Created boss sprites and frame-by-frame animations for gameplay scenes."
             },
             "links": [
